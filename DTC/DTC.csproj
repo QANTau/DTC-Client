@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5FAD1427-5DAA-44B8-8EA7-72D193452F43}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>QANT.DTC</RootNamespace>
+    <AssemblyName>QANT.DTC</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LOG_MESSAGES</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gurock.SmartInspect">
+      <HintPath>C:\Program Files (x86)\Gurock Software\SmartInspect Professional\lib\dotnet\v2.x\Gurock.SmartInspect.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Client\Client.cs" />
+    <Compile Include="Client\DiagnosticEventArgs.cs" />
+    <Compile Include="Client\ErrorEventArgs.cs" />
+    <Compile Include="Client\Message.cs" />
+    <Compile Include="Client\MessageEventArgs.cs" />
+    <Compile Include="Messages\Request\EncodingRequest.cs" />
+    <Compile Include="Messages\Request\MarketDepthRequest.cs" />
+    <Compile Include="Messages\Response\EncodingResponse.cs" />
+    <Compile Include="Messages\Response\GeneralLogMessage.cs" />
+    <Compile Include="Messages\Header.cs" />
+    <Compile Include="Messages\Heartbeat.cs" />
+    <Compile Include="Messages\Response\HistoricalPriceDataRecordResponse.cs" />
+    <Compile Include="Messages\Request\HistoricalPriceDataRequest.cs" />
+    <Compile Include="Messages\Response\HistoricalPriceDataReject.cs" />
+    <Compile Include="Messages\Response\HistoricalPriceDataResponse.cs" />
+    <Compile Include="Messages\Request\Logoff.cs" />
+    <Compile Include="Messages\Request\LogonRequest.cs" />
+    <Compile Include="Messages\Response\LogonResponse.cs" />
+    <Compile Include="Messages\Request\MarketDataRequest.cs" />
+    <Compile Include="Messages\Response\MarketDataSnapshot.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateBidAskCompact.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionX.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionXint.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateTradeCompact.cs" />
+    <Compile Include="Messages\Request\SecurityDefinitionForSymbolRequest.cs" />
+    <Compile Include="Messages\Response\SecurityDefinitionResponse.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\Constants.cs" />
+    <Compile Include="Protocol\Enums.cs" />
+    <Compile Include="Utils\ArrayUtils.cs" />
+    <Compile Include="Utils\DateUtils.cs" />
+    <Compile Include="Utils\StringUtils.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
