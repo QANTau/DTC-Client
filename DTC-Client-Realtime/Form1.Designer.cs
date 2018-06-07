@@ -74,6 +74,16 @@ namespace QANT.DTC
             this.tabPageConnection = new System.Windows.Forms.TabPage();
             this.tabPageData = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.txtPasswordHistorical = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtUsernameHistorical = new System.Windows.Forms.TextBox();
+            this.txtPortHistorical = new System.Windows.Forms.TextBox();
+            this.txtHostHistorical = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -92,6 +102,8 @@ namespace QANT.DTC
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -109,8 +121,6 @@ namespace QANT.DTC
             // 
             this.groupBox1.Controls.Add(this.txtPassword);
             this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.chkDiagnosticEvents);
-            this.groupBox1.Controls.Add(this.chkVerbose);
             this.groupBox1.Controls.Add(this.cmdConnDisconn);
             this.groupBox1.Controls.Add(this.txtUsername);
             this.groupBox1.Controls.Add(this.txtPort);
@@ -120,7 +130,7 @@ namespace QANT.DTC
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(3, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(273, 196);
+            this.groupBox1.Size = new System.Drawing.Size(273, 149);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Connection";
@@ -147,7 +157,7 @@ namespace QANT.DTC
             this.chkDiagnosticEvents.AutoSize = true;
             this.chkDiagnosticEvents.Checked = true;
             this.chkDiagnosticEvents.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDiagnosticEvents.Location = new System.Drawing.Point(8, 117);
+            this.chkDiagnosticEvents.Location = new System.Drawing.Point(11, 19);
             this.chkDiagnosticEvents.Name = "chkDiagnosticEvents";
             this.chkDiagnosticEvents.Size = new System.Drawing.Size(211, 17);
             this.chkDiagnosticEvents.TabIndex = 4;
@@ -157,7 +167,7 @@ namespace QANT.DTC
             // chkVerbose
             // 
             this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(8, 140);
+            this.chkVerbose.Location = new System.Drawing.Point(11, 42);
             this.chkVerbose.Name = "chkVerbose";
             this.chkVerbose.Size = new System.Drawing.Size(222, 17);
             this.chkVerbose.TabIndex = 5;
@@ -166,7 +176,7 @@ namespace QANT.DTC
             // 
             // cmdConnDisconn
             // 
-            this.cmdConnDisconn.Location = new System.Drawing.Point(8, 163);
+            this.cmdConnDisconn.Location = new System.Drawing.Point(8, 115);
             this.cmdConnDisconn.Name = "cmdConnDisconn";
             this.cmdConnDisconn.Size = new System.Drawing.Size(259, 23);
             this.cmdConnDisconn.TabIndex = 6;
@@ -534,6 +544,8 @@ namespace QANT.DTC
             // 
             // tabPageConnection
             // 
+            this.tabPageConnection.Controls.Add(this.groupBox5);
+            this.tabPageConnection.Controls.Add(this.groupBox3);
             this.tabPageConnection.Controls.Add(this.groupBox1);
             this.tabPageConnection.Location = new System.Drawing.Point(4, 22);
             this.tabPageConnection.Name = "tabPageConnection";
@@ -574,6 +586,101 @@ namespace QANT.DTC
             this.splitContainer1.SplitterDistance = 81;
             this.splitContainer1.TabIndex = 5;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.txtPasswordHistorical);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.txtUsernameHistorical);
+            this.groupBox3.Controls.Add(this.txtPortHistorical);
+            this.groupBox3.Controls.Add(this.txtHostHistorical);
+            this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Location = new System.Drawing.Point(3, 161);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(273, 120);
+            this.groupBox3.TabIndex = 1;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Historical Data";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.chkDiagnosticEvents);
+            this.groupBox5.Controls.Add(this.chkVerbose);
+            this.groupBox5.Location = new System.Drawing.Point(3, 287);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(273, 71);
+            this.groupBox5.TabIndex = 2;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Options";
+            // 
+            // txtPasswordHistorical
+            // 
+            this.txtPasswordHistorical.Location = new System.Drawing.Point(167, 91);
+            this.txtPasswordHistorical.Name = "txtPasswordHistorical";
+            this.txtPasswordHistorical.PasswordChar = '*';
+            this.txtPasswordHistorical.Size = new System.Drawing.Size(100, 20);
+            this.txtPasswordHistorical.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(8, 95);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(53, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Password";
+            // 
+            // txtUsernameHistorical
+            // 
+            this.txtUsernameHistorical.Location = new System.Drawing.Point(167, 67);
+            this.txtUsernameHistorical.Name = "txtUsernameHistorical";
+            this.txtUsernameHistorical.Size = new System.Drawing.Size(100, 20);
+            this.txtUsernameHistorical.TabIndex = 2;
+            // 
+            // txtPortHistorical
+            // 
+            this.txtPortHistorical.Location = new System.Drawing.Point(167, 43);
+            this.txtPortHistorical.Name = "txtPortHistorical";
+            this.txtPortHistorical.Size = new System.Drawing.Size(100, 20);
+            this.txtPortHistorical.TabIndex = 1;
+            this.txtPortHistorical.Text = "11098";
+            // 
+            // txtHostHistorical
+            // 
+            this.txtHostHistorical.Location = new System.Drawing.Point(167, 19);
+            this.txtHostHistorical.Name = "txtHostHistorical";
+            this.txtHostHistorical.Size = new System.Drawing.Size(100, 20);
+            this.txtHostHistorical.TabIndex = 0;
+            this.txtHostHistorical.Text = "127.0.0.1";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 70);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(55, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Username";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(8, 46);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(26, 13);
+            this.label8.TabIndex = 11;
+            this.label8.Text = "Port";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(8, 22);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(58, 13);
+            this.label9.TabIndex = 9;
+            this.label9.Text = "IP Address";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -613,6 +720,10 @@ namespace QANT.DTC
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -661,6 +772,16 @@ namespace QANT.DTC
         private TabPage tabPageConnection;
         private TabPage tabPageData;
         private SplitContainer splitContainer1;
+        private GroupBox groupBox5;
+        private GroupBox groupBox3;
+        private TextBox txtPasswordHistorical;
+        private Label label6;
+        private TextBox txtUsernameHistorical;
+        private TextBox txtPortHistorical;
+        private TextBox txtHostHistorical;
+        private Label label7;
+        private Label label8;
+        private Label label9;
     }
 }
 

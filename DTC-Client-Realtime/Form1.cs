@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace QANT.DTC
 {
     public partial class Form1 : Form
     {
+        private const string RegistryKey = "SOFTWARE\\DTC-Client";
+
         private Client _client;
         private int _requestId = 1;
 
@@ -17,6 +20,9 @@ namespace QANT.DTC
             InitializeComponent();
 
             _realtimeSymbolsData = new Dictionary<string, int>();
+
+            LoadConnectionSettings();
+            LoadConnectionSettingsHistorical();
         }
 
         #region Connection Management
@@ -431,6 +437,42 @@ namespace QANT.DTC
         private void txtReceiveLog_DoubleClick(object sender, EventArgs e)
         {
             txtReceiveLog.Clear();
+        }
+
+        #endregion
+
+        #region Load Registry Settings
+
+        private void LoadConnectionSettings()
+        {
+            //  Loads settings from Registry (SOFTWARE\DTC-Client) if they exist
+            try
+            {
+                var key = Registry.CurrentUser.OpenSubKey(RegistryKey);
+                if (key == null) return;
+                txtHost.Text = key.GetValue("Host").ToString();
+                txtPort.Text = key.GetValue("Port").ToString();
+                txtUsername.Text = key.GetValue("Username").ToString();
+                txtPassword.Text = key.GetValue("Password").ToString();
+            }
+            catch
+            { }
+        }
+
+        private void LoadConnectionSettingsHistorical()
+        {
+            //  Loads settings from Registry (SOFTWARE\DTC-Client) if they exist
+            try
+            {
+                var key = Registry.CurrentUser.OpenSubKey(RegistryKey);
+                if (key == null) return;
+                txtHostHistorical.Text = key.GetValue("HostHistorical").ToString();
+                txtPortHistorical.Text = key.GetValue("PortHistorical").ToString();
+                txtUsernameHistorical.Text = key.GetValue("UsernameHistorical").ToString();
+                txtPasswordHistorical.Text = key.GetValue("PasswordHistorical").ToString();
+            }
+            catch
+            { }
         }
 
         #endregion
