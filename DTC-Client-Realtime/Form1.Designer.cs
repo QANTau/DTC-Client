@@ -36,8 +36,6 @@ namespace QANT.DTC
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.chkDiagnosticEvents = new System.Windows.Forms.CheckBox();
-            this.chkVerbose = new System.Windows.Forms.CheckBox();
             this.cmdConnDisconn = new System.Windows.Forms.Button();
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.txtPort = new System.Windows.Forms.TextBox();
@@ -45,6 +43,8 @@ namespace QANT.DTC
             this.lblUsername = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.chkDiagnosticEvents = new System.Windows.Forms.CheckBox();
+            this.chkVerbose = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rbnMarketDepth = new System.Windows.Forms.RadioButton();
             this.rbnMarketData = new System.Windows.Forms.RadioButton();
@@ -72,10 +72,8 @@ namespace QANT.DTC
             this.label3 = new System.Windows.Forms.Label();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPageConnection = new System.Windows.Forms.TabPage();
-            this.tabPageData = new System.Windows.Forms.TabPage();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.txtPasswordHistorical = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtUsernameHistorical = new System.Windows.Forms.TextBox();
@@ -84,6 +82,13 @@ namespace QANT.DTC
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.tabPageData = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.txtSearchText = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.cmdSearchSymbol = new System.Windows.Forms.Button();
+            this.cmdSearchDesc = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -97,13 +102,14 @@ namespace QANT.DTC
             this.groupBox4.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPageConnection.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.tabPageData.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox5.SuspendLayout();
+            this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -151,28 +157,6 @@ namespace QANT.DTC
             this.label5.Size = new System.Drawing.Size(53, 13);
             this.label5.TabIndex = 7;
             this.label5.Text = "Password";
-            // 
-            // chkDiagnosticEvents
-            // 
-            this.chkDiagnosticEvents.AutoSize = true;
-            this.chkDiagnosticEvents.Checked = true;
-            this.chkDiagnosticEvents.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDiagnosticEvents.Location = new System.Drawing.Point(11, 19);
-            this.chkDiagnosticEvents.Name = "chkDiagnosticEvents";
-            this.chkDiagnosticEvents.Size = new System.Drawing.Size(211, 17);
-            this.chkDiagnosticEvents.TabIndex = 4;
-            this.chkDiagnosticEvents.Text = "Show Diagnostic Events in Activity Log";
-            this.chkDiagnosticEvents.UseVisualStyleBackColor = true;
-            // 
-            // chkVerbose
-            // 
-            this.chkVerbose.AutoSize = true;
-            this.chkVerbose.Location = new System.Drawing.Point(11, 42);
-            this.chkVerbose.Name = "chkVerbose";
-            this.chkVerbose.Size = new System.Drawing.Size(222, 17);
-            this.chkVerbose.TabIndex = 5;
-            this.chkVerbose.Text = "Show Verbose Sent/Received Messages";
-            this.chkVerbose.UseVisualStyleBackColor = true;
             // 
             // cmdConnDisconn
             // 
@@ -233,6 +217,28 @@ namespace QANT.DTC
             this.label1.Size = new System.Drawing.Size(58, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "IP Address";
+            // 
+            // chkDiagnosticEvents
+            // 
+            this.chkDiagnosticEvents.AutoSize = true;
+            this.chkDiagnosticEvents.Checked = true;
+            this.chkDiagnosticEvents.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDiagnosticEvents.Location = new System.Drawing.Point(11, 19);
+            this.chkDiagnosticEvents.Name = "chkDiagnosticEvents";
+            this.chkDiagnosticEvents.Size = new System.Drawing.Size(211, 17);
+            this.chkDiagnosticEvents.TabIndex = 4;
+            this.chkDiagnosticEvents.Text = "Show Diagnostic Events in Activity Log";
+            this.chkDiagnosticEvents.UseVisualStyleBackColor = true;
+            // 
+            // chkVerbose
+            // 
+            this.chkVerbose.AutoSize = true;
+            this.chkVerbose.Location = new System.Drawing.Point(11, 42);
+            this.chkVerbose.Name = "chkVerbose";
+            this.chkVerbose.Size = new System.Drawing.Size(222, 17);
+            this.chkVerbose.TabIndex = 5;
+            this.chkVerbose.Text = "Show Verbose Sent/Received Messages";
+            this.chkVerbose.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -555,36 +561,16 @@ namespace QANT.DTC
             this.tabPageConnection.Text = "Connection";
             this.tabPageConnection.UseVisualStyleBackColor = true;
             // 
-            // tabPageData
+            // groupBox5
             // 
-            this.tabPageData.Controls.Add(this.groupBox2);
-            this.tabPageData.Controls.Add(this.groupBox4);
-            this.tabPageData.Location = new System.Drawing.Point(4, 22);
-            this.tabPageData.Name = "tabPageData";
-            this.tabPageData.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageData.Size = new System.Drawing.Size(279, 612);
-            this.tabPageData.TabIndex = 1;
-            this.tabPageData.Text = "Data";
-            this.tabPageData.UseVisualStyleBackColor = true;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(287, 723);
-            this.splitContainer1.SplitterDistance = 81;
-            this.splitContainer1.TabIndex = 5;
+            this.groupBox5.Controls.Add(this.chkDiagnosticEvents);
+            this.groupBox5.Controls.Add(this.chkVerbose);
+            this.groupBox5.Location = new System.Drawing.Point(3, 287);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(273, 71);
+            this.groupBox5.TabIndex = 2;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Options";
             // 
             // groupBox3
             // 
@@ -602,17 +588,6 @@ namespace QANT.DTC
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Historical Data";
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.chkDiagnosticEvents);
-            this.groupBox5.Controls.Add(this.chkVerbose);
-            this.groupBox5.Location = new System.Drawing.Point(3, 287);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(273, 71);
-            this.groupBox5.TabIndex = 2;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Options";
             // 
             // txtPasswordHistorical
             // 
@@ -681,6 +656,88 @@ namespace QANT.DTC
             this.label9.TabIndex = 9;
             this.label9.Text = "IP Address";
             // 
+            // tabPageData
+            // 
+            this.tabPageData.Controls.Add(this.groupBox6);
+            this.tabPageData.Controls.Add(this.groupBox2);
+            this.tabPageData.Controls.Add(this.groupBox4);
+            this.tabPageData.Location = new System.Drawing.Point(4, 22);
+            this.tabPageData.Name = "tabPageData";
+            this.tabPageData.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageData.Size = new System.Drawing.Size(279, 612);
+            this.tabPageData.TabIndex = 1;
+            this.tabPageData.Text = "Data";
+            this.tabPageData.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.splitContainer1.IsSplitterFixed = true;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.pictureBox1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl2);
+            this.splitContainer1.Size = new System.Drawing.Size(287, 723);
+            this.splitContainer1.SplitterDistance = 81;
+            this.splitContainer1.TabIndex = 5;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.cmdSearchDesc);
+            this.groupBox6.Controls.Add(this.cmdSearchSymbol);
+            this.groupBox6.Controls.Add(this.txtSearchText);
+            this.groupBox6.Controls.Add(this.label10);
+            this.groupBox6.Location = new System.Drawing.Point(4, 198);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(273, 78);
+            this.groupBox6.TabIndex = 3;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Symbol Search";
+            // 
+            // txtSearchText
+            // 
+            this.txtSearchText.Location = new System.Drawing.Point(167, 19);
+            this.txtSearchText.Name = "txtSearchText";
+            this.txtSearchText.Size = new System.Drawing.Size(100, 20);
+            this.txtSearchText.TabIndex = 0;
+            this.txtSearchText.Text = "AUDUSD";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(8, 22);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 13);
+            this.label10.TabIndex = 5;
+            this.label10.Text = "Search Text";
+            // 
+            // cmdSearchSymbol
+            // 
+            this.cmdSearchSymbol.Location = new System.Drawing.Point(11, 45);
+            this.cmdSearchSymbol.Name = "cmdSearchSymbol";
+            this.cmdSearchSymbol.Size = new System.Drawing.Size(122, 23);
+            this.cmdSearchSymbol.TabIndex = 8;
+            this.cmdSearchSymbol.Text = "Search Symbol";
+            this.cmdSearchSymbol.UseVisualStyleBackColor = true;
+            this.cmdSearchSymbol.Click += new System.EventHandler(this.cmdSearchSymbol_Click);
+            // 
+            // cmdSearchDesc
+            // 
+            this.cmdSearchDesc.Location = new System.Drawing.Point(145, 45);
+            this.cmdSearchDesc.Name = "cmdSearchDesc";
+            this.cmdSearchDesc.Size = new System.Drawing.Size(122, 23);
+            this.cmdSearchDesc.TabIndex = 9;
+            this.cmdSearchDesc.Text = "Search Description";
+            this.cmdSearchDesc.UseVisualStyleBackColor = true;
+            this.cmdSearchDesc.Click += new System.EventHandler(this.cmdSearchDesc_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -715,15 +772,17 @@ namespace QANT.DTC
             this.groupBox4.PerformLayout();
             this.tabControl2.ResumeLayout(false);
             this.tabPageConnection.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.tabPageData.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -782,6 +841,11 @@ namespace QANT.DTC
         private Label label7;
         private Label label8;
         private Label label9;
+        private GroupBox groupBox6;
+        private Button cmdSearchDesc;
+        private Button cmdSearchSymbol;
+        private TextBox txtSearchText;
+        private Label label10;
     }
 }
 

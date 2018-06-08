@@ -74,7 +74,7 @@ namespace QANT.DTC
 
         #endregion
 
-        #region Symbol Definition
+        #region Securities/Symbols
 
         private void cmdSymbolInfoRequest_Click(object sender, EventArgs e)
         {
@@ -84,6 +84,22 @@ namespace QANT.DTC
             var symbol = txtSymbolInfo.Text.Trim().ToUpper();
             _client.RequestSymbolDefinition(_requestId, symbol);
             _requestId++;
+        }
+
+        private void cmdSearchSymbol_Click(object sender, EventArgs e)
+        {
+            if (_client == null)
+                return;
+
+            var symbol = txtSearchText.Text.Trim();
+            _client.RequestSymbolSearch(_requestId, symbol, Protocol.SecurityType.SecurityTypeForex,
+                Protocol.SearchType.SearchTypeBySymbol);  // FIX - Select Security Type
+            _requestId++;
+        }
+
+        private void cmdSearchDesc_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
@@ -284,6 +300,12 @@ namespace QANT.DTC
 
                         break;
                     }
+                case Protocol.MessageType.SecurityDefinitionReject:
+                {
+                    var obj = (Messages.SecurityDefinitionReject)e.Msg;
+                    AppendMiscMessages(e.Type + Environment.NewLine + JsonConvert.SerializeObject(obj, Formatting.Indented));
+                    break;
+                }
                 case Protocol.MessageType.SecurityDefinitionResponse:
                     {
                         var obj = (Messages.SecurityDefinitionResponse)e.Msg;

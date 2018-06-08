@@ -41,10 +41,6 @@ namespace QANT.DTC
 
             public int RequestId { get; }                                   //  4 Bytes - Pos 0
             public string Symbol { get; }                                   // 64 Bytes - Pos 4
-
-            /// <summary>
-            /// Exchange
-            /// </summary>
             public string Exchange { get; }                                 // 16 Bytes - Pos 68
             public Protocol.SecurityType SecurityType { get; }              //  4 Bytes - Pos 84
             public string Description { get; }                              // 64 Bytes - Pos 88

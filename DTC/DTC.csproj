@@ -46,6 +46,7 @@
     <Compile Include="Client\MessageEventArgs.cs" />
     <Compile Include="Messages\Request\EncodingRequest.cs" />
     <Compile Include="Messages\Request\MarketDepthRequest.cs" />
+    <Compile Include="Messages\Request\SymbolSearchRequest.cs" />
     <Compile Include="Messages\Response\EncodingResponse.cs" />
     <Compile Include="Messages\Response\GeneralLogMessage.cs" />
     <Compile Include="Messages\Header.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Messages\Response\MarketDataUpdateSessionXint.cs" />
     <Compile Include="Messages\Response\MarketDataUpdateTradeCompact.cs" />
     <Compile Include="Messages\Request\SecurityDefinitionForSymbolRequest.cs" />
+    <Compile Include="Messages\Response\SecurityDefinitionReject.cs" />
     <Compile Include="Messages\Response\SecurityDefinitionResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\Constants.cs" />

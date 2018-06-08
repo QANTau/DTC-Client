@@ -213,6 +213,15 @@ namespace QANT.DTC
 
         #region Symbol Requests
 
+        public void RequestSymbolSearch(int requestId, string searchText,
+            Protocol.SecurityType securityType,
+            Protocol.SearchType searchType,
+            string exchange = "")
+        {
+            var request = new Messages.SymbolSearchRequest(requestId, searchText, securityType, searchType, exchange);
+            SendData(request.Binary());
+        }
+
         public void RequestSymbolDefinition(int requestId, string symbol, string exchange = "")
         {
             var request = new Messages.SecurityDefinitionForSymbolRequest(requestId, symbol, exchange);
@@ -581,6 +590,13 @@ namespace QANT.DTC
                                 // Process the Response
                                 var response = new Messages.MarketDataUpdateSessionX(header, payload);
                                 OnMessageReceiveEvent(header, response);
+                                break;
+                            }
+                        case Protocol.MessageType.SecurityDefinitionReject:
+                            {
+                                var response = new Messages.SecurityDefinitionReject(header, payload);
+                                OnMessageReceiveEvent(header, response);
+
                                 break;
                             }
                         case Protocol.MessageType.SecurityDefinitionResponse:
