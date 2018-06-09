@@ -5,9 +5,9 @@ namespace QANT.DTC
     public partial class Messages
     {
         /// <summary>
-        /// Request/Response Header (Common Elements)
+        /// Request/Response Header
         /// </summary>
-        public class Header
+        public class BinaryHeader
         {
             #region C++ Struct
             //uint16_t Size;
@@ -18,15 +18,15 @@ namespace QANT.DTC
             public Protocol.MessageType Type { get; set; }    // 2 Bytes - Pos 2
 
             /// <summary>
-            /// Request/Response Header (Common Elements)
+            /// Request/Response Header
             /// </summary>
-            public Header()
+            public BinaryHeader()
             { }
 
             /// <summary>
-            /// Request/Response Header (Common Elements)
+            /// Request/Response Header
             /// </summary>
-            public Header(byte[] rawHeader)
+            public BinaryHeader(byte[] rawHeader)
             {
                 SetHeader(rawHeader);
             }
@@ -35,7 +35,7 @@ namespace QANT.DTC
             /// Binary Formatted Header
             /// </summary>
             /// <returns></returns>
-            internal byte[] GetHeader()
+            public byte[] GetHeader()
             {
                 return Utils.Combine(
                     BitConverter.GetBytes(Size), 
@@ -51,8 +51,6 @@ namespace QANT.DTC
                 Size = BitConverter.ToUInt16(header, 0);
                 Type = (Protocol.MessageType)BitConverter.ToUInt16(header, 2);
             }
-
- 
         }
     }
 }

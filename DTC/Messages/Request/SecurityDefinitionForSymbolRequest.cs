@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Security Definition For Symbol Request Msg
+        /// Security Definition For Symbol Request Message
         /// </summary>
-        public class SecurityDefinitionForSymbolRequest : Header
+        public class SecurityDefinitionForSymbolRequest : JsonHeader
         {
             #region C++ Struct
             //int32_t RequestID;
@@ -15,12 +18,12 @@ namespace QANT.DTC
             //char Exchange[EXCHANGE_LENGTH];
             #endregion
 
-            public int RequestId { get; }                       //  4 Bytes - Pos 0
-            public string Symbol { get; }                       // 64 Bytes - Pos 4
-            public string Exchange { get; }                     // 16 Bytes - Pos 68
+            public int RequestID { get; }
+            public string Symbol { get; }
+            public string Exchange { get; }
 
             /// <summary>
-            /// Security Definition For Symbol Request Msg
+            /// Security Definition For Symbol Request Message
             /// </summary>
             /// <param name="requestId"></param>
             /// <param name="symbol"></param>
@@ -31,32 +34,13 @@ namespace QANT.DTC
                 string exchange)
             {
                 // Header
-                Size = 88;
                 Type = Protocol.MessageType.SecurityDefinitionForSymbolRequest;
 
                 // Payload
-                RequestId = requestId;
+                RequestID = requestId;
                 Symbol = symbol;
                 Exchange = exchange;
             }
-
-            /// <summary>
-            /// Binary Formatted Msg
-            /// </summary>
-            /// <returns></returns>
-            public byte[] Binary()
-            {
-                var payload = Utils.Combine(BitConverter.GetBytes(RequestId),
-                                            Utils.AsPaddedBytes(Symbol, Protocol.SymbolLength),
-                                            Utils.AsPaddedBytes(Exchange, Protocol.ExchangeLength));
-
-                var bytes = Utils.Combine(GetHeader(), payload);
-
-                return bytes;
-            }
-
-
-
         }
     }
 }

@@ -4,10 +4,11 @@ namespace QANT.DTC
 {
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Encoding Request Msg
+        /// Encoding Request Message
         /// </summary>
-        public class EncodingRequest : Header
+        public class EncodingRequest : BinaryHeader
         {
             #region C++ Struct
             //int32_t ProtocolVersion;
@@ -19,6 +20,9 @@ namespace QANT.DTC
             public string ProtocolType { get; }                         // 4 Bytes - Pos 8
 
             /// <inheritdoc />
+            /// <summary>
+            /// Encoding Request Message
+            /// </summary>
             public EncodingRequest()
             {
                 // Header
@@ -27,12 +31,12 @@ namespace QANT.DTC
 
                 // Payload
                 ProtocolVersion = Protocol.CurrentVersion;
-                Encoding = Protocol.Encoding.BinaryEncoding;
+                Encoding = Protocol.Encoding.JsonEncoding;
                 ProtocolType = Utils.GetString(Utils.AsPaddedBytes(Protocol.ProtocolType, 4));
             }
 
             /// <summary>
-            /// Binary Formatted Msg
+            /// Binary Formatted Message
             /// </summary>
             /// <returns></returns>
             public byte[] Binary()

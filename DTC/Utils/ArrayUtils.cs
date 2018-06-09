@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace QANT.DTC
 {
@@ -13,7 +14,7 @@ namespace QANT.DTC
         public static byte[] Combine(byte[] a01, byte[] a02)
         {
             // a01 + a02
-            byte[] result = new byte[a01.Length + a02.Length];
+            var result = new byte[a01.Length + a02.Length];
             Buffer.BlockCopy(a01, 0, result, 0, a01.Length);
             Buffer.BlockCopy(a02, 0, result, a01.Length, a02.Length);
             return result;
@@ -126,6 +127,76 @@ namespace QANT.DTC
             var r = Combine(p3, p4);
 
             return Combine(l, r);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="delimiter"></param>
+        /// <returns>Code originally from https://stackoverflow.com/questions/9755090/split-a-byte-array-at-a-delimiter</returns>
+        public static List<byte[]> SplitBytesByDelimiter(byte[] data, byte delimiter)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (data.Length < 1) return null;
+
+            var retList = new List<byte[]>();
+
+            var start = 0;
+            var pos = 0;
+            byte[] remainder = null;
+
+            while (true)
+            {
+                if (pos >= data.Length) break;
+
+                if (data[pos] == delimiter)
+                {
+                    // Separator Found
+                    if (pos == start)
+                    {
+                        pos++;
+                        start++;
+                        if (pos >= data.Length)
+                        {
+                            remainder = null;
+                            break;
+                        }
+
+                        remainder = new byte[data.Length - start];
+                        Buffer.BlockCopy(data, start, remainder, 0, (data.Length - start));
+                    }
+                    else
+                    {
+                        var ba = new byte[(pos - start)];
+                        Buffer.BlockCopy(data, start, ba, 0, (pos - start));
+                        retList.Add(ba);
+
+                        start = pos + 1;
+                        pos = start;
+
+                        if (pos >= data.Length)
+                        {
+                            remainder = null;
+                            break;
+                        }
+
+                        remainder = new byte[data.Length - start];
+                        Buffer.BlockCopy(data, start, remainder, 0, (data.Length - start));
+                    }
+                }
+                else
+                {
+                    pos++;
+                }
+            }
+
+            if (remainder != null)
+            {
+                retList.Add(remainder);
+            }
+
+            return retList;
         }
     }
 }

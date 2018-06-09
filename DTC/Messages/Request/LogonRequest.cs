@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Logon Request Msg
+        /// Logon Request Message
         /// </summary>
-        public class LogonRequest : Header
+        public class LogonRequest : JsonHeader
         {
-           
             #region C++ Struct
             //int32_t ProtocolVersion;
             //char Username[USERNAME_PASSWORD_LENGTH];
@@ -24,27 +27,27 @@ namespace QANT.DTC
             //char ClientName[32];
             #endregion
             
-            public int ProtocolVersion { get; }                //  4 Bytes - Pos 0
-            public string Username { get; }                    // 32 Bytes - Pos 4
-            public string Password { get; }                    // 32 Bytes - Pos 36
-            public string GeneralTextData { get; }             // 64 Bytes - Pos 68
-            public int Integer1 { get; }                      //  4 Bytes - Pos 132
-            public int Integer2 { get; }                      //  4 Bytes - Pos 136
-            public int HeartbeatIntervalInSeconds { get; }     //  4 Bytes - Pos 140
-            public Protocol.TradeMode TradeMode { get; }       //  4 Bytes - Pos 144
-            public string TradeAccount { get; }                // 32 Bytes - Pos 148
-            public string HardwareIdentifier { get; }          // 64 Bytes - Pos 180
-            public string ClientName { get; }                  // 32 Bytes - Pos 244
+            public int ProtocolVersion { get; }
+            public string Username { get; }
+            public string Password { get; }
+            public string GeneralTextData { get; }
+            public int Integer_1 { get; }
+            public int Integer_2 { get; }
+            public int HeartbeatIntervalInSeconds { get; }
+            public Protocol.TradeMode TradeMode { get; }
+            public string TradeAccount { get; }
+            public string HardwareIdentifier { get; }
+            public string ClientName { get; }
 
+            /// <inheritdoc />
             /// <summary>
-            /// Logon Request Msg
+            /// Logon Request Message
             /// </summary>
             /// <param name="user"></param>
             /// <param name="password"></param>
             public LogonRequest(string user, string password)
             {
                 // Header
-                Size = 280;
                 Type = Protocol.MessageType.LogonRequest;
                 
                 // Payload
@@ -52,8 +55,8 @@ namespace QANT.DTC
                 Username = user;
                 Password = password;
                 GeneralTextData = "QANT C# DTC Client";
-                Integer1 = 0;
-                Integer2 = 0;
+                Integer_1 = 0;
+                Integer_2 = 0;
                 HeartbeatIntervalInSeconds = Protocol.HeartbeatInterval;
                 TradeMode = Protocol.TradeMode.TradeModeUnset;
                 TradeAccount = "";
@@ -61,27 +64,9 @@ namespace QANT.DTC
                 ClientName = Environment.MachineName;
             }
 
-            /// <summary>
-            /// Binary Formatted Msg
-            /// </summary>
-            /// <returns></returns>
-            public byte[] Binary()
+            public byte[] Packet()
             {
-                var payload = Utils.Combine(BitConverter.GetBytes(ProtocolVersion),
-                                            Utils.AsPaddedBytes(Username, Protocol.UsernamePasswordLength),
-                                            Utils.AsPaddedBytes(Password, Protocol.UsernamePasswordLength),
-                                            Utils.AsPaddedBytes(GeneralTextData, Protocol.GeneralIdentifierLength),
-                                            BitConverter.GetBytes(Integer1),
-                                            BitConverter.GetBytes(Integer2),
-                                            BitConverter.GetBytes(HeartbeatIntervalInSeconds),
-                                            BitConverter.GetBytes((int)TradeMode),
-                                            Utils.AsPaddedBytes(TradeAccount, Protocol.TradeAccountLength),
-                                            Utils.AsPaddedBytes(HardwareIdentifier, Protocol.GeneralIdentifierLength),
-                                            Utils.AsPaddedBytes(ClientName, Protocol.ClientNameLength));
-
-                var bytes = Utils.Combine(GetHeader(), payload);
-
-                return bytes;
+                return Utils.AsBytes(JsonConvert.SerializeObject(this));
             }
 
         }

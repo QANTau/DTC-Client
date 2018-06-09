@@ -6,21 +6,12 @@ namespace QANT.DTC
     {
         public class MessageEventArgs : EventArgs
         {
-            private readonly Messages.Header _header;
+            public string Message { get; }
 
-            private readonly object _msg;
-
-            public MessageEventArgs(Messages.Header header, object msg)
+            public MessageEventArgs(string message)
             {
-                _header = header;
-                _msg = msg;
+                Message = message;
             }
-
-            public ushort Size => _header.Size;
-
-            public Protocol.MessageType Type => _header.Type;
-
-            public object Msg => _msg;
         }
     }
 }

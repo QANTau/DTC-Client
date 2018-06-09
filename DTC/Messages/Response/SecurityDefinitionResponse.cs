@@ -6,10 +6,11 @@ namespace QANT.DTC
 
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Security Definition Response Msg
+        /// Security Definition Response Message
         /// </summary>
-        public class SecurityDefinitionResponse : Header
+        public class SecurityDefinitionResponse : JsonHeader
         {
             #region C++ Struct
             //int32_t RequestID;
@@ -39,91 +40,34 @@ namespace QANT.DTC
             //char ExchangeSymbol[SYMBOL_LENGTH];
             #endregion
 
-            public int RequestId { get; }                                   //  4 Bytes - Pos 0
-            public string Symbol { get; }                                   // 64 Bytes - Pos 4
-            public string Exchange { get; }                                 // 16 Bytes - Pos 68
-            public Protocol.SecurityType SecurityType { get; }              //  4 Bytes - Pos 84
-            public string Description { get; }                              // 64 Bytes - Pos 88
-            public float MinPriceIncrement { get; }                         //  4 Bytes - Pos 152
-            public Protocol.PriceDisplayFormat PriceDisplayFormat { get; }  //  4 Bytes - Pos 156
-            public float CurrencyValuePerIncrement { get; }                 //  4 Bytes - Pos 160
-            public byte IsFinalMessage { get; }                             //  1 Byte  - Pos 164
-            public float FloatToIntPriceMultiplier { get; }                 //  4 Bytes - Pos 165
-            public float IntToFloatPriceDivisor { get; }                    //  4 Bytes - Pos 169
-            public string UnderlyingSymbol { get; }                         // 32 Bytes - Pos 173
-            public byte UpdatesBidAskOnly { get; }                          //  1 Byte  - Pos 205
-            public float StrikePrice { get; }                               //  4 Bytes - Pos 206
-            public Protocol.PutOrCall PutOrCall { get; }                    //  1 Byte  - Pos 210
-            public int ShortInterest { get; }                               //  4 Bytes - Pos 211
-            public uint SecurityExpirationDate { get; }                     //  4 Bytes - Pos 215
-            public float BuyRolloverInterest { get; }                       //  4 Bytes - Pos 219
-            public float SellRolloverInterest { get; }                      //  4 Bytes - Pos 223
-            public float EarningsPerShare { get; }                          //  4 Bytes - Pos 227
-            public uint SharesOutstanding { get; }                          //  4 Bytes - Pos 231
-            public float IntToFloatQuantityDivisor { get; }                 //  4 Bytes - Pos 235
-            public byte HasMarketDepthData { get; }                         //  1 Byte  - Pos 239
-            public float DisplayPriceMultiplier { get; }                    //  4 Bytes - Pos 240
-            public string ExchangeSymbol { get; }                           // 64 Bytes - Pos 244
+            public int RequestId { get; set; }
+            public string Symbol { get; set; }
+            public string Exchange { get; set; }
+            public Protocol.SecurityType SecurityType { get; set; }
+            public string Description { get; set; }
+            public float MinPriceIncrement { get; set; }
+            public Protocol.PriceDisplayFormat PriceDisplayFormat { get; set; }
+            public float CurrencyValuePerIncrement { get; set; }
+            public byte IsFinalMessage { get; set; }
+            public float FloatToIntPriceMultiplier { get; set; }
+            public float IntToFloatPriceDivisor { get; set; }
+            public string UnderlyingSymbol { get; set; }
+            public byte UpdatesBidAskOnly { get; set; }
+            public float StrikePrice { get; set; }
+            public Protocol.PutOrCall PutOrCall { get; set; }
+            public int ShortInterest { get; set; }
+            public uint SecurityExpirationDate { get; set; }
+            public float BuyRolloverInterest { get; set; }
+            public float SellRolloverInterest { get; set; }
+            public float EarningsPerShare { get; set; }
+            public uint SharesOutstanding { get; set; }
+            public float IntToFloatQuantityDivisor { get; set; }
+            public byte HasMarketDepthData { get; set; }
+            public float DisplayPriceMultiplier { get; set; }
+            public string ExchangeSymbol { get; set; }
 
-
-            /// <summary>
-            /// Security Definition Response
-            /// </summary>
-            /// <param name="header"></param>
-            /// <param name="payload"></param>
-            public SecurityDefinitionResponse(Header header, byte[] payload)
-            {
-                // Header
-                Size = header.Size;
-                Type = header.Type;
-
-                // Payload
-                RequestId = BitConverter.ToInt32(payload, 0);
-
-                var symbol = new byte[Protocol.SymbolLength];
-                Buffer.BlockCopy(payload, 4, symbol, 0, Protocol.SymbolLength);
-                Symbol = Utils.GetCleanString(symbol);
-
-                var exchange = new byte[Protocol.ExchangeLength];
-                Buffer.BlockCopy(payload, 68, exchange, 0, Protocol.ExchangeLength);
-                Exchange = Utils.GetCleanString(exchange);
-
-                SecurityType = (Protocol.SecurityType)BitConverter.ToInt32(payload, 84);
-
-                var description = new byte[Protocol.SymbolDescriptionLength];
-                Buffer.BlockCopy(payload, 88, description, 0, Protocol.SymbolDescriptionLength);
-                Description = Utils.GetCleanString(description);
-
-                MinPriceIncrement = BitConverter.ToSingle(payload, 152);
-                PriceDisplayFormat = (Protocol.PriceDisplayFormat)BitConverter.ToInt32(payload, 156);
-                CurrencyValuePerIncrement = BitConverter.ToSingle(payload, 160);
-                IsFinalMessage = payload[164];
-                FloatToIntPriceMultiplier = BitConverter.ToSingle(payload, 165);
-                IntToFloatPriceDivisor = BitConverter.ToSingle(payload, 169);
-
-                var underlyingSymbol = new byte[Protocol.UnderlyingSymbolLength];
-                Buffer.BlockCopy(payload, 173, underlyingSymbol, 0, Protocol.UnderlyingSymbolLength);
-                UnderlyingSymbol = Utils.GetCleanString(underlyingSymbol);
-                
-                UpdatesBidAskOnly = payload[205];
-                StrikePrice = BitConverter.ToSingle(payload, 206);
-                PutOrCall = (Protocol.PutOrCall)BitConverter.ToInt32(payload, 210);
-                ShortInterest = BitConverter.ToInt32(payload, 211);
-                SecurityExpirationDate = BitConverter.ToUInt32(payload, 215);
-                BuyRolloverInterest = BitConverter.ToSingle(payload, 219);
-                SellRolloverInterest = BitConverter.ToSingle(payload, 223);
-                EarningsPerShare = BitConverter.ToSingle(payload, 227);
-                SharesOutstanding = BitConverter.ToUInt32(payload, 231);
-                IntToFloatQuantityDivisor = BitConverter.ToSingle(payload, 235);
-                HasMarketDepthData = payload[239];
-                DisplayPriceMultiplier = BitConverter.ToSingle(payload, 240);
-
-                var exchangeSymbol = new byte[Protocol.SymbolLength];
-                Buffer.BlockCopy(payload, 244, exchangeSymbol, 0, Protocol.SymbolLength);
-                ExchangeSymbol = Utils.GetCleanString(exchangeSymbol);
-
-            }
-
+            // Not in the protocol specification but provided in Json responses
+            public string Currency { get; set; }
         }
     }
 }

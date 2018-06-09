@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace QANT.DTC
@@ -22,16 +23,7 @@ namespace QANT.DTC
         /// <returns></returns>
         public static string GetCleanString(byte[] obj)
         {
-            string result = "";
-
-            foreach (byte item in obj)
-            {
-                if (item == 0)
-                    continue;
-                result += Convert.ToChar(item);
-            }
-
-            return result;
+            return obj.Where(item => item != 0).Aggregate("", (current, item) => current + Convert.ToChar(item));
         }
 
         /// <summary>
@@ -53,7 +45,7 @@ namespace QANT.DTC
         public static byte[] AsPaddedBytes(string obj, int length)
         {
             // Check for Null String (Empty String is OK)
-            if (String.IsNullOrEmpty(obj))
+            if (string.IsNullOrEmpty(obj))
                 obj = "";
 
             var working = obj;
@@ -67,12 +59,25 @@ namespace QANT.DTC
 
             var data = GetBytes(working);
 
-            for (int x = obj.Length; x < length; x++)
+            for (var x = obj.Length; x < length; x++)
             {
                 data = Combine(data, nullterminator);
             }
 
             return data;
         }
+
+        public static byte[] AsBytes(string obj)
+        {
+            // Check for Null String (Empty String is OK)
+            if (string.IsNullOrEmpty(obj))
+                obj = "";
+
+            var data = GetBytes(obj);
+            var nullterminator = new byte[] { 0 };
+
+            return Combine(data, nullterminator); 
+        }
+
     }
 }

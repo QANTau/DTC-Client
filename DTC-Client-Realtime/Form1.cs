@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using Newtonsoft.Json;
 
 namespace QANT.DTC
 {
@@ -39,13 +38,19 @@ namespace QANT.DTC
             {
                 // Setup DTC Client
                 _client = new Client();
-                _client.ConnectEvent += Client_ConnectEvent;
-                _client.DisconnectEvent += Client_DisconnectEvent;
-                _client.ErrorEvent += Client_ErrorEvent;
-                _client.DiagnosticEvent += _client_DiagnosticEvent;
-                _client.MessageReceiveEvent += _client_MessageReceiveEvent;
-                _client.MessageSendEvent += _client_MessageSendEvent;
-                
+                _client.OnConnect += ClientOnConnect;
+                _client.OnDisconnect += ClientOnDisconnect;
+
+
+                _client.OnError += ClientOnError;
+                _client.OnInformation += ClientOnInformation;
+
+
+                _client.OnMessageSend += ClientOnMessageSend;
+                _client.OnMessageReceive += ClientOnMessageReceive;
+                _client.OnRawMessageSend += ClientOnRawMessageSend;
+                _client.OnRawMessageReceive += ClientOnRawMessageReceive;
+
                 // IP Address & Port
                 var ipAddress = txtHost.Text.Trim();
                 Int16.TryParse(txtPort.Text, out short port);
@@ -82,24 +87,11 @@ namespace QANT.DTC
                 return;
 
             var symbol = txtSymbolInfo.Text.Trim().ToUpper();
+
+            AppendActivityLog("Requesting Information for " + symbol + " (Request ID " + _requestId + ")");
+
             _client.RequestSymbolDefinition(_requestId, symbol);
             _requestId++;
-        }
-
-        private void cmdSearchSymbol_Click(object sender, EventArgs e)
-        {
-            if (_client == null)
-                return;
-
-            var symbol = txtSearchText.Text.Trim();
-            _client.RequestSymbolSearch(_requestId, symbol, Protocol.SecurityType.SecurityTypeForex,
-                Protocol.SearchType.SearchTypeBySymbol);  // FIX - Select Security Type
-            _requestId++;
-        }
-
-        private void cmdSearchDesc_Click(object sender, EventArgs e)
-        {
-
         }
 
         #endregion
@@ -113,25 +105,13 @@ namespace QANT.DTC
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
 
-            if (rbnMarketData.Checked)
-            {
-                if (!_realtimeSymbolsData.ContainsKey(symbol))
-                {
-                    _client.RequestMarketData(symbol, _requestId);
-                    _realtimeSymbolsData.Add(symbol, _requestId);
-                    _requestId++;
-                }
-            }
-            else
-            {
-                if (!_realtimeSymbolsData.ContainsKey(symbol))
-                {
-                    _client.RequestMarketDepth(symbol, _requestId, 2);
-                    _realtimeSymbolsData.Add(symbol, _requestId);
-                    _requestId++;
-                }
+            if (_realtimeSymbolsData.ContainsKey(symbol)) return;
 
-            }
+            AppendActivityLog("Subscribing to " + symbol + " (Request ID " + _requestId + ")");
+
+            _client.RequestMarketData(symbol, _requestId);
+            _realtimeSymbolsData.Add(symbol, _requestId);
+            _requestId++;
         }
 
         private void cmdUnsubscribe_Click(object sender, EventArgs e)
@@ -141,22 +121,12 @@ namespace QANT.DTC
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
 
-            if (rbnMarketData.Checked)
-            {
-                if (_realtimeSymbolsData.ContainsKey(symbol))
-                {
-                    _client.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
-                    _realtimeSymbolsData.Remove(symbol);
-                }
-            }
-            else
-            {
-                if (_realtimeSymbolsData.ContainsKey(symbol))
-                {
-                    _client.RequestMarketDepth(symbol, _realtimeSymbolsData[symbol], 2, Protocol.RequestAction.Unsubscribe);
-                    _realtimeSymbolsData.Remove(symbol);
-                }
-            }
+            if (!_realtimeSymbolsData.ContainsKey(symbol)) return;
+
+            AppendActivityLog("Unsubscribing from " + symbol);
+
+            _client.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
+            _realtimeSymbolsData.Remove(symbol);
         }
 
         private void cmdSnapshot_Click(object sender, EventArgs e)
@@ -166,153 +136,84 @@ namespace QANT.DTC
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
 
-            if (rbnMarketData.Checked)
-            {
-                _client.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
-                _requestId++;
-            }
-            else
-            {
-                _client.RequestMarketDepth(symbol, _requestId, 2, Protocol.RequestAction.Snapshot);
-                _requestId++;
-            }
-        }
+            AppendActivityLog("Requesting Snapshot for " + symbol + " (Request ID " + _requestId + ")");
 
-        private string FindSymbolForRealtime(int requestId)
-        {
-            var result = "UNKNOWN";
-
-            foreach (var item in _realtimeSymbolsData)
-            {
-                if (item.Value == requestId)
-                {
-                    result = item.Key;
-                }
-            }
-
-            return result;
+            _client.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
+            _requestId++;
         }
 
         #endregion
 
         #region External Events
 
-        private void Client_ConnectEvent(object sender, EventArgs e)
+        private void ClientOnConnect(object sender, EventArgs e)
         {
             AppendActivityLog("Connected");
 
             SetConnDisconnStatus();
         }
-        private void Client_DisconnectEvent(object sender, EventArgs e)
+
+        private void ClientOnDisconnect(object sender, EventArgs e)
         {
             AppendActivityLog("Disconnected");
-
-            SetConnDisconnStatus();
         }
 
-        private void Client_ErrorEvent(object sender, Client.ErrorEventArgs e)
+        private void ClientOnInformation(object sender, Client.MessageEventArgs e)
         {
-            AppendErrorLog(e.Exception == null ? e.Msg : e.Exception.Message);
+            AppendActivityLog(e.Message);
         }
 
-        private void _client_DiagnosticEvent(object sender, Client.DiagnosticEventArgs e)
+        private void ClientOnError(object sender, Client.ErrorEventArgs e)
         {
-
-            if (chkDiagnosticEvents.Checked)
-            {
-                AppendActivityLog(e.Msg);
-            }
+            AppendErrorLog(e.Exception == null ? e.Message : e.Exception.Message);
         }
 
-        private void _client_MessageSendEvent(object sender, Client.MessageEventArgs e)
+        private bool MessageFilter(string message)
         {
-            if (chkVerbose.Checked)
-            {
-                AppendSendLog(e.Size + " Bytes \t" + e.Type);
-            }
-            else
-            {
-                // Ignore Specific (Implemented) Msg Types 
-                switch (e.Type)
-                {
-                    case Protocol.MessageType.Heartbeat:
-                        break;
-                    default:
-                        AppendSendLog(e.Size + " Bytes \t" + e.Type);
-                        break;
-                }
-            }
+            if (chkFilterHeartbeats.Checked && message == "Heartbeat")
+                return false;
+
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (chkFilterRealtime.Checked && 
+                (message == "MarketDataUpdateBidAskCompact" ||
+                 message == "MarketDataUpdateTradeCompact"))
+                return false;
+
+            return true;
         }
 
-        private void _client_MessageReceiveEvent(object sender, Client.MessageEventArgs e)
+        private void ClientOnMessageSend(object sender, Client.MessageEventArgs e)
         {
-            if (e.Msg == null)
-            {
-                AppendReceiveLog(e.Size + " Bytes \t" + e.Type + " (Not Implemented)");
-            }
-            else
-            {
-                if (chkVerbose.Checked)
-                {
-                    AppendReceiveLog(e.Size + " Bytes \t" + e.Type);
-                }
-                else
-                {
-                    // Ignore Specific (Implemented) Msg Types 
-                    switch (e.Type)
-                    {
-                        case Protocol.MessageType.Heartbeat:
-                            break;
-                        case Protocol.MessageType.MarketDataUpdateTradeCompact:
-                            break;
-                        case Protocol.MessageType.MarketDataUpdateBidAskCompact:
-                            break;
-                        default:
-                            AppendReceiveLog(e.Size + " Bytes \t" + e.Type);
-                            break;
-                    }
-                }
-            }
+            if (MessageFilter(e.Message))
+                AppendSendLog(e.Message);
+        }
 
-            // Security/Realtime/Historical Data Update
-            switch (e.Type)
-            {
-                case Protocol.MessageType.LogonResponse:
-                    {
-                        var obj = (Messages.LogonResponse)e.Msg;
-                        AppendMiscMessages(e.Type + Environment.NewLine + JsonConvert.SerializeObject(obj, Formatting.Indented));
-                        break;
-                    }
-                case Protocol.MessageType.MarketDataSnapshot:
-                    {
-                        var obj = (Messages.MarketDataSnapshot)e.Msg;
-                        AppendMiscMessages(e.Type + Environment.NewLine + JsonConvert.SerializeObject(obj, Formatting.Indented));
-                        break;
-                    }
-                case Protocol.MessageType.MarketDataUpdateBidAskCompact:
-                    {
-                        var obj = (Messages.MarketDataUpdateBidAskCompact)e.Msg;
-                        if (obj != null)
-                        {
-                            var symbol = FindSymbolForRealtime(obj.SymbolId);
-                            AppendRealTime(symbol + " " + JsonConvert.SerializeObject(obj));
-                        }
+        private void ClientOnRawMessageSend(object sender, Client.RawMessageEventArgs e)
+        {
+            if (!chkDisplayRaw.Checked) return;
 
-                        break;
-                    }
-                case Protocol.MessageType.SecurityDefinitionReject:
-                {
-                    var obj = (Messages.SecurityDefinitionReject)e.Msg;
-                    AppendMiscMessages(e.Type + Environment.NewLine + JsonConvert.SerializeObject(obj, Formatting.Indented));
-                    break;
-                }
-                case Protocol.MessageType.SecurityDefinitionResponse:
-                    {
-                        var obj = (Messages.SecurityDefinitionResponse)e.Msg;
-                        AppendMiscMessages(e.Type + Environment.NewLine + JsonConvert.SerializeObject(obj, Formatting.Indented));
-                        break;
-                    }
-            }
+            if (!MessageFilter(e.MessageType.ToString())) return;
+
+            var packet = new byte[e.Packet.Length - 1];
+            Buffer.BlockCopy(e.Packet, 0, packet, 0, e.Packet.Length - 1);
+            AppendSendLogRaw(e.MessageType + " - " + Utils.GetString(packet));
+        }
+
+        private void ClientOnMessageReceive(object sender, Client.MessageEventArgs e)
+        {
+            if (MessageFilter(e.Message))
+                AppendReceiveLog(e.Message);
+        }
+
+        private void ClientOnRawMessageReceive(object sender, Client.RawMessageEventArgs e)
+        {
+            if (!chkDisplayRaw.Checked) return;
+
+            if (!MessageFilter(e.MessageType.ToString())) return;
+
+            var packet = new byte[e.Packet.Length - 1];
+            Buffer.BlockCopy(e.Packet, 0, packet, 0, e.Packet.Length - 1);
+            AppendReceiveLogRaw(e.MessageType + " - " + Utils.GetString(packet));
         }
 
         #endregion
@@ -335,24 +236,6 @@ namespace QANT.DTC
             txtActivityLog.AppendText(dt + msg + Environment.NewLine);
 
             txtActivityLog.ScrollToCaret();
-        }
-
-        public void AppendMiscMessages(string msg)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action<string>(AppendMiscMessages), msg);
-                return;
-            }
-
-            var dt = DateTime.Now.ToString("yyyyMMdd")
-                + " "
-                + DateTime.Now.ToString("HH:mm:ss")
-                + " - ";
-
-            txtMiscMessages.AppendText(dt + msg + Environment.NewLine + Environment.NewLine);
-
-            txtMiscMessages.ScrollToCaret();
         }
 
         public void AppendRealTime(string msg)
@@ -409,6 +292,24 @@ namespace QANT.DTC
             txtSendLog.ScrollToCaret();
         }
 
+        public void AppendSendLogRaw(string msg)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string>(AppendSendLogRaw), msg);
+                return;
+            }
+
+            var dt = DateTime.Now.ToString("yyyyMMdd")
+                     + " "
+                     + DateTime.Now.ToString("HH:mm:ss")
+                     + " - ";
+
+            txtSendLogRaw.AppendText(dt + msg + Environment.NewLine);
+
+            txtSendLogRaw.ScrollToCaret();
+        }
+
         public void AppendReceiveLog(string msg)
         {
             if (InvokeRequired)
@@ -427,38 +328,22 @@ namespace QANT.DTC
             txtReceiveLog.ScrollToCaret();
         }
 
-        #endregion
-
-        #region On-Screen Log Management
-
-        private void txtActivityLog_DoubleClick(object sender, EventArgs e)
+        public void AppendReceiveLogRaw(string msg)
         {
-            txtActivityLog.Clear();
-        }
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string>(AppendReceiveLogRaw), msg);
+                return;
+            }
 
-        private void txtMiscMessages_DoubleClick(object sender, EventArgs e)
-        {
-            txtMiscMessages.Clear();
-        }
+            var dt = DateTime.Now.ToString("yyyyMMdd")
+                     + " "
+                     + DateTime.Now.ToString("HH:mm:ss")
+                     + " - ";
 
-        private void txtRealTime_DoubleClick(object sender, EventArgs e)
-        {
-            txtRealTime.Clear();
-        }
+            txtReceiveLogRaw.AppendText(dt + msg + Environment.NewLine);
 
-        private void txtErrorLog_DoubleClick(object sender, EventArgs e)
-        {
-            txtErrorLog.Clear();
-        }
-
-        private void txtSendLog_DoubleClick(object sender, EventArgs e)
-        {
-            txtSendLog.Clear();
-        }
-
-        private void txtReceiveLog_DoubleClick(object sender, EventArgs e)
-        {
-            txtReceiveLog.Clear();
+            txtReceiveLogRaw.ScrollToCaret();
         }
 
         #endregion

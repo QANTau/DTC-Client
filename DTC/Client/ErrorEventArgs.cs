@@ -6,16 +6,14 @@ namespace QANT.DTC
     {
         public class ErrorEventArgs : EventArgs
         {
-            private string _msg;
-
             public Exception Exception { get; set; }
 
-            public string Msg { get => _msg; set => _msg = value; }
+            public string Message { get; set; }
 
-            public ErrorEventArgs(Exception ex, string msg)
+            public ErrorEventArgs(Exception ex, string message)
             {
                 Exception = ex;
-                Msg = msg;
+                Message = message;
             }
         }
     }

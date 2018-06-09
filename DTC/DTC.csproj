@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Serialization" />
@@ -40,17 +43,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Client.cs" />
-    <Compile Include="Client\DiagnosticEventArgs.cs" />
     <Compile Include="Client\ErrorEventArgs.cs" />
-    <Compile Include="Client\Message.cs" />
     <Compile Include="Client\MessageEventArgs.cs" />
-    <Compile Include="Messages\Request\EncodingRequest.cs" />
+    <Compile Include="Client\RawMessageEventArgs.cs" />
+    <Compile Include="Client\SymbolLookupEventArgs.cs" />
+    <Compile Include="Messages\JsonHeader.cs" />
+    <Compile Include="Messages\Binary\EncodingRequest.cs" />
     <Compile Include="Messages\Request\MarketDepthRequest.cs" />
-    <Compile Include="Messages\Request\SymbolSearchRequest.cs" />
-    <Compile Include="Messages\Response\EncodingResponse.cs" />
+    <Compile Include="Messages\Binary\EncodingResponse.cs" />
     <Compile Include="Messages\Response\GeneralLogMessage.cs" />
-    <Compile Include="Messages\Header.cs" />
-    <Compile Include="Messages\Heartbeat.cs" />
+    <Compile Include="Messages\BinaryHeader.cs" />
+    <Compile Include="Messages\Heartbeat\Heartbeat.cs" />
     <Compile Include="Messages\Response\HistoricalPriceDataRecordResponse.cs" />
     <Compile Include="Messages\Request\HistoricalPriceDataRequest.cs" />
     <Compile Include="Messages\Response\HistoricalPriceDataReject.cs" />
@@ -61,8 +64,8 @@
     <Compile Include="Messages\Request\MarketDataRequest.cs" />
     <Compile Include="Messages\Response\MarketDataSnapshot.cs" />
     <Compile Include="Messages\Response\MarketDataUpdateBidAskCompact.cs" />
-    <Compile Include="Messages\Response\MarketDataUpdateSessionX.cs" />
-    <Compile Include="Messages\Response\MarketDataUpdateSessionXint.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionLow.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionLowInt.cs" />
     <Compile Include="Messages\Response\MarketDataUpdateTradeCompact.cs" />
     <Compile Include="Messages\Request\SecurityDefinitionForSymbolRequest.cs" />
     <Compile Include="Messages\Response\SecurityDefinitionReject.cs" />
@@ -72,8 +75,11 @@
     <Compile Include="Protocol\Enums.cs" />
     <Compile Include="Utils\ArrayUtils.cs" />
     <Compile Include="Utils\DateUtils.cs" />
+    <Compile Include="Utils\JsonUtils.cs" />
     <Compile Include="Utils\StringUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Historical Price Data Request Msg
+        /// Historical Price Data Request Message
         /// </summary>
-        public class HistoricalPriceDataRequest : Header
+        public class HistoricalPriceDataRequest : JsonHeader
         {
             #region C++ Struct
             //int32_t RequestID;
@@ -22,16 +25,16 @@ namespace QANT.DTC
             //uint8_t Flag_1;
             #endregion
 
-            public int RequestId { get; }                                       //  4 Bytes - Pos 0
-            public string Symbol { get; }                                       // 64 Bytes - Pos 4
-            public string Exchange { get; }                                     // 16 Bytes - Pos 68
-            public Protocol.HistoricalDataInterval RecordInterval { get; }      //  4 Bytes - Pos 84
-            public long StartDateTime { get; }                                  //  8 Bytes - Pos 92
-            public long EndDateTime { get; }                                    //  8 Bytes - Pos 100
-            public uint MaxDaysToReturn { get; }                                //  4 Bytes - Pos 108
-            public byte UseZLibCompression { get; }                             //  1 Byte  - Pos 112
-            public byte RequestDividendAdjustedStockData { get; }               //  1 Byte  - Pos 113
-            public byte Flag1 { get; }                                         //  1 Byte  - Pos 114
+            public int RequestId { get; }
+            public string Symbol { get; }
+            public string Exchange { get; }
+            public Protocol.HistoricalDataInterval RecordInterval { get; }
+            public long StartDateTime { get; }
+            public long EndDateTime { get; }
+            public uint MaxDaysToReturn { get; }
+            public byte UseZLibCompression { get; }
+            public byte RequestDividendAdjustedStockData { get; }
+            public byte Flag_1 { get; }
 
             /// <inheritdoc />
             public HistoricalPriceDataRequest(
@@ -43,7 +46,6 @@ namespace QANT.DTC
                 DateTime end)
             {
                 // Header
-                Size = 118;
                 Type = Protocol.MessageType.HistoricalPriceDataRequest;
 
                 // Payload
@@ -56,7 +58,7 @@ namespace QANT.DTC
                 MaxDaysToReturn = 0;
                 UseZLibCompression = 0;
                 RequestDividendAdjustedStockData = 0;
-                Flag1 = 0;
+                Flag_1 = 0;
             }
 
             /// <summary>
@@ -70,7 +72,6 @@ namespace QANT.DTC
                 uint numDays)
             {
                 // Header
-                Size = 118;
                 Type = Protocol.MessageType.HistoricalPriceDataRequest;
 
                 // Payload
@@ -83,31 +84,8 @@ namespace QANT.DTC
                 MaxDaysToReturn = numDays;
                 UseZLibCompression = 0;
                 RequestDividendAdjustedStockData = 0;
-                Flag1 = 0;
+                Flag_1 = 0;
             }
-
-            /// <summary>
-            /// Binary Formatted Msg
-            /// </summary>
-            /// <returns></returns>
-            public byte[] Binary()
-            {
-                var payload = Utils.Combine(BitConverter.GetBytes(RequestId),
-                                            Utils.AsPaddedBytes(Symbol, Protocol.SymbolLength),
-                                            Utils.AsPaddedBytes(Exchange, Protocol.ExchangeLength),
-                                            BitConverter.GetBytes((int)RecordInterval),
-                                            BitConverter.GetBytes(StartDateTime),
-                                            BitConverter.GetBytes(EndDateTime),
-                                            BitConverter.GetBytes(MaxDaysToReturn),
-                                            BitConverter.GetBytes(UseZLibCompression),
-                                            BitConverter.GetBytes(RequestDividendAdjustedStockData),
-                                            BitConverter.GetBytes(Flag1));
-
-                var bytes = Utils.Combine(GetHeader(), payload);
-
-                return bytes;
-            }
-
         }
     }
 }

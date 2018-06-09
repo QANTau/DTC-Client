@@ -251,6 +251,7 @@ namespace QANT.DTC
 
         public enum MessageType : ushort
         {
+            Unknown = 0,
             LogonRequest = 1,
             LogonResponse = 2,
             Heartbeat = 3,

@@ -4,10 +4,11 @@ namespace QANT.DTC
 {
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Market Data Request Msg
+        /// Market Data Request Message
         /// </summary>
-        public class MarketDataRequest : Header
+        public class MarketDataRequest : JsonHeader
         {
 
             #region C++ Struct
@@ -17,13 +18,13 @@ namespace QANT.DTC
             //char Exchange[EXCHANGE_LENGTH];
             #endregion
 
-            public Protocol.RequestAction RequestAction { get; }        //  4 Bytes - Pos 0
-            public int SymbolId { get; }                                //  4 Bytes - Pos 4
-            public string Symbol { get; }                               // 64 Bytes - Pos 8
-            public string Exchange { get; }                             // 16 Bytes - Pos 72
+            public Protocol.RequestAction RequestAction { get; }
+            public int SymbolID { get; }
+            public string Symbol { get; }
+            public string Exchange { get; }
 
             /// <summary>
-            /// Market Data Request Msg
+            /// Market Data Request Message
             /// </summary>
             /// <param name="symbolId"></param>
             /// <param name="symbol"></param>
@@ -36,32 +37,14 @@ namespace QANT.DTC
                 string exchange = "")
             {
                 // Header
-                Size = 92;
                 Type = Protocol.MessageType.MarketDataRequest;
 
                 // Payload
                 RequestAction = action;
-                SymbolId = symbolId;
+                SymbolID = symbolId;
                 Symbol = symbol;
                 Exchange = exchange;
             }
-
-            /// <summary>
-            /// Binary Formatted Msg
-            /// </summary>
-            /// <returns></returns>
-            public byte[] Binary()
-            {
-                var payload = Utils.Combine(BitConverter.GetBytes((int)RequestAction),
-                                            BitConverter.GetBytes(SymbolId),
-                                            Utils.AsPaddedBytes(Symbol, Protocol.SymbolLength),
-                                            Utils.AsPaddedBytes(Exchange, Protocol.ExchangeLength));
-
-                var bytes = Utils.Combine(GetHeader(), payload);
-
-                return bytes;
-            }
-
         }
     }
 }

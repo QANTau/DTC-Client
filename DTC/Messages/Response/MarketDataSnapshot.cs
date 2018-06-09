@@ -4,10 +4,11 @@ namespace QANT.DTC
 {
     public partial class Messages
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Market Data Snapshot Msg
+        /// Market Data Snapshot Message
         /// </summary>
-        public class MarketDataSnapshot : Header
+        public class MarketDataSnapshot : JsonHeader
         {
 
             #region C++ Struct
@@ -31,72 +32,24 @@ namespace QANT.DTC
             //t_DateTime4Byte TradingSessionDate;
             #endregion
 
-            public int SymbolId { get; }                        //  4 Bytes - Pos 0
-            public double SessionSettlementPrice { get; }       //  8 Bytes - Pos 4
-            public double SessionOpenPrice { get; }             //  8 Bytes - Pos 12
-            public double SessionHighPrice { get; }             //  8 Bytes - Pos 20
-            public double SessionLowPrice { get; }              //  8 Bytes - Pos 28
-            public double SessionVolume { get; }                //  8 Bytes - Pos 36
-            public int SessionNumTrades { get; }                //  4 Bytes - Pos 44
-            public int OpenInterest { get; }                    //  4 Bytes - Pos 48
-            public double BidPrice { get; }                     //  8 Bytes - Pos 52
-            public double AskPrice { get; }                     //  8 Bytes - Pos 60
-            public double AskQuantity { get; }                  //  8 Bytes - Pos 68
-            public double BidQuantity { get; }                  //  8 Bytes - Pos 76
-            public double LastTradePrice { get; }               //  8 Bytes - Pos 84
-            public double LastTradeVolume { get; }              //  8 Bytes - Pos 92
-            public double LastTradeDateTime { get; }            //  8 Bytes - Pos 100
-            public double BidAskDateTime { get; }               //  8 Bytes - Pos 108
-            public int SessionSettlementDateTime { get; }       //  4 Bytes - Pos 116
-            public int TradingSessionDate { get; }              //  4 Bytes - Pos 120
-
-            /// <summary>
-            /// Market Data Snapshot Msg
-            /// </summary>
-            public MarketDataSnapshot(Header header, byte[] payload)
-            {
-                // Header
-                Size = header.Size;
-                Type = header.Type;
-
-                // Payload
-                SymbolId = BitConverter.ToInt32(payload, 0);
-
-                SessionSettlementPrice = BitConverter.ToDouble(payload, 4);
-
-                SessionOpenPrice = BitConverter.ToDouble(payload, 12);
-
-                SessionHighPrice = BitConverter.ToDouble(payload, 20);
-
-                SessionLowPrice = BitConverter.ToDouble(payload, 28);
-
-                SessionVolume = BitConverter.ToDouble(payload, 36);
-
-                SessionNumTrades = BitConverter.ToInt32(payload, 44);
-
-                OpenInterest = BitConverter.ToInt32(payload, 48);
-
-                BidPrice = BitConverter.ToDouble(payload, 52);
-
-                AskPrice = BitConverter.ToDouble(payload, 60);
-
-                AskQuantity = BitConverter.ToDouble(payload, 68);
-
-                BidQuantity = BitConverter.ToDouble(payload, 76);
-
-                LastTradePrice = BitConverter.ToDouble(payload, 84);
-
-                LastTradeVolume = BitConverter.ToDouble(payload, 92);
-
-                LastTradeDateTime = BitConverter.ToDouble(payload, 100);
-
-                BidAskDateTime = BitConverter.ToDouble(payload, 108);
-
-                SessionSettlementDateTime = BitConverter.ToInt32(payload, 116);
-
-                TradingSessionDate = BitConverter.ToInt32(payload, 120);
-
-            }
+            public int SymbolId { get; set; }
+            public double SessionSettlementPrice { get; set; }
+            public double SessionOpenPrice { get; set; }
+            public double SessionHighPrice { get; set; }
+            public double SessionLowPrice { get; set; }
+            public double SessionVolume { get; set; }
+            public int SessionNumTrades { get; set; }
+            public int OpenInterest { get; set; }
+            public double BidPrice { get; set; }
+            public double AskPrice { get; set; }
+            public double AskQuantity { get; set; }
+            public double BidQuantity { get; set; }
+            public double LastTradePrice { get; set; }
+            public double LastTradeVolume { get; set; }
+            public double LastTradeDateTime { get; set; }
+            public double BidAskDateTime { get; set; }
+            public int SessionSettlementDateTime { get; set; }
+            public int TradingSessionDate { get; set; }
 
         }
     }
