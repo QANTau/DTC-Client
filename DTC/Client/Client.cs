@@ -30,6 +30,7 @@ namespace QANT.DTC
 
         private bool _encodingCompleted;
         private bool _loginComplete;
+        private readonly bool _isHistorical;
 
         private readonly ConcurrentQueue<byte[]> _sendQueue;
 
@@ -41,8 +42,10 @@ namespace QANT.DTC
         /// <summary>
         /// DTC Client
         /// </summary>
-        public Client()
+        public Client(bool isHistorical = false)
         {
+            _isHistorical = isHistorical;
+
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
                 DontFragment = true,
@@ -388,6 +391,8 @@ namespace QANT.DTC
         /// <param name="e"></param>
         private void _heartbeatTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (_isHistorical) return;                      // No Heartbeats for Historical Requests
+
             // Stop the Timer
             _heartbeatTimer.Stop();
 
@@ -511,7 +516,9 @@ namespace QANT.DTC
 
                                     // Flag Login as Complete
                                     _loginComplete = true;
-                                    _heartbeatTimer.Start();
+
+                                    if (!_isHistorical)                                 // No Heartbeats for Historical Requests
+                                        _heartbeatTimer.Start();
                                 }
                                 break;
                             }
