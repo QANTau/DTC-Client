@@ -30,11 +30,15 @@ namespace QANT.DTC
 
         private bool _encodingCompleted;
         private bool _loginComplete;
+
         private readonly bool _isHistorical;
+        private bool _isReadyForHistorical;
 
         private readonly ConcurrentQueue<byte[]> _sendQueue;
 
         private readonly ConcurrentQueue<byte[]> _receiveQueue;
+
+        private readonly ConcurrentQueue<byte[]> _historicalDataQueue;
 
         public Messages.LogonResponse LogonResponse { get; private set; }
         public Messages.Heartbeat LatestHeartbeatReceived { get; private set; }
@@ -48,8 +52,9 @@ namespace QANT.DTC
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
+                NoDelay = true,
                 DontFragment = true,
-                ReceiveBufferSize = Int32.MaxValue
+                ReceiveBufferSize = int.MaxValue
             };
             _encodingCompleted = false;
 
@@ -79,6 +84,8 @@ namespace QANT.DTC
             };
             receiveWorker.DoWork += _receiveWorker_DoWork;
             receiveWorker.RunWorkerAsync();
+
+            _historicalDataQueue = new ConcurrentQueue<byte[]>();
         }
 
         /// <summary>
@@ -116,6 +123,16 @@ namespace QANT.DTC
         protected void OnErrorEvent(ErrorEventArgs args)
         {
             OnError?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Diagnostic Information
+        /// </summary>
+        public event EventHandler<EventArgs> OnReadyForHistoricalDataRequest;
+
+        protected void OnReadyForHistoricalDataRequestEvent()
+        {
+            OnReadyForHistoricalDataRequest?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -204,8 +221,10 @@ namespace QANT.DTC
             _password = password;
 
             _endPoint = new IPEndPoint(IPAddress.Parse(ipAddress), port);
+
             _callback = OnReceive;
-            _buffer = new byte[Protocol.BufferSize];
+
+            _buffer = _isHistorical ? new byte[Protocol.HistoricalBufferSize] : new byte[Protocol.BufferSize];
 
             try
             {
@@ -238,14 +257,14 @@ namespace QANT.DTC
             OnDisconnectEvent();
             _socket.Disconnect(true);
         }
-        
+
         /// <summary>
         /// DTC Server Logon
         /// </summary>
-        private void Logon()
+        private void Logon(bool isHistorical = false)
         {
             OnInformationEvent("Sending Logon Request");
-            var request = new Messages.LogonRequest(_user, _password);
+            var request = new Messages.LogonRequest(_user, _password, isHistorical);
             SendData(request.Packet());
         }
 
@@ -272,6 +291,29 @@ namespace QANT.DTC
         #endregion
 
         #region Historical Data Requests
+
+        public void RequestHistoricalData(string symbol, int requestId, Protocol.HistoricalDataInterval interval,
+            DateTime startDate, DateTime endDate, string exchange = "")
+        {
+            var request = new Messages.HistoricalPriceDataRequest(
+                requestId, symbol, exchange, interval, startDate, endDate);
+
+            SendData(request);
+        }
+
+        public void ProcessHistoricalData()
+        {
+            var packets = new byte[0];
+
+            while (_historicalDataQueue.Count > 0)
+            {
+                _historicalDataQueue.TryDequeue(out var packet);
+                packets = Utils.Combine(packets, packet);
+            }
+
+            ReceiveData(packets);
+
+        }
 
         #endregion
 
@@ -305,6 +347,8 @@ namespace QANT.DTC
         /// <param name="packet"></param>
         private void ReceiveData(byte[] packet)
         {
+            if (!_socket.Connected) return;
+
             const byte nullChar = 0;
 
             var packets = Utils.SplitBytesByDelimiter(packet, nullChar);
@@ -319,7 +363,7 @@ namespace QANT.DTC
         private void OnReceive(IAsyncResult asyn)
         {
             // Sanity Checks
-            var receivedBytes = 0;
+            int receivedBytes;
             try
             {
                 receivedBytes = _socket.EndReceive(asyn);
@@ -327,57 +371,73 @@ namespace QANT.DTC
             catch (Exception ex)
             {
                 OnErrorEvent(new ErrorEventArgs(ex, null));
+                return;
             }
 
             // Response Handling
-            if (receivedBytes > 4)
+            var packet = new byte[receivedBytes];
+            Buffer.BlockCopy(_buffer, 0, packet, 0, receivedBytes);
+
+            if (!_encodingCompleted)                                        // Encoding Response (Binary)
             {
-                var packet = new byte[receivedBytes];
-                Buffer.BlockCopy(_buffer, 0, packet, 0, receivedBytes);
-                
-                if (!_encodingCompleted)                                        // Encoding Response (Binary)
+                if (packet.Length != 16)
                 {
-                    if (packet.Length != 16)
-                    {
-                        OnErrorEvent(new ErrorEventArgs(null, "Failure in Encoding Response"));
-                        Disconnect();
-                        return;
-                    }
-
-                    var response = new Messages.EncodingResponse(packet);
-                    if (response.Type == Protocol.MessageType.EncodingResponse)
-                    {
-                        // Raise Events
-                        OnConnectEvent();
-                        OnMessageReceiveEvent("EncodingResponse");
-                        OnInformationEvent("Json Encoding Request Complete");
-
-                        // Initiate Logon
-                        _encodingCompleted = true;
-                        Logon();
-                    }
-                    else
-                    {
-                        OnErrorEvent(new ErrorEventArgs(null, "Failure in Encoding Response"));
-                        Disconnect();
-                        return;
-                    }
+                    OnErrorEvent(new ErrorEventArgs(null, "Failure in Encoding Response"));
+                    Disconnect();
+                    return;
                 }
-                else                                                            // Other Responses (Json)
+
+                var response = new Messages.EncodingResponse(packet);
+                if (response.Type == Protocol.MessageType.EncodingResponse)
                 {
-                    // Enqueue Incoming Data
-                    ReceiveData(packet);
+                    // Raise Events
+                    OnConnectEvent();
+                    OnMessageReceiveEvent("EncodingResponse");
+                    OnInformationEvent("Json Encoding Request Complete");
+
+                    // Initiate Logon
+                    _encodingCompleted = true;
+                    Logon();
                 }
+                else
+                {
+                    OnErrorEvent(new ErrorEventArgs(null, "Failure in Encoding Response"));
+                    Disconnect();
+                    return;
+                }
+            }
+            else                                                            // Other Responses (Json)
+            {
+                // Enqueue Incoming Data
+                ReceiveData(packet);
             }
 
             try
             {
+                if (_isReadyForHistorical)
+                    _callback = OnReceiveHistorical;
+                else
+                    _callback = OnReceive;
+
                 _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, _callback, null);
             }
             catch (Exception ex)
             {
                 OnErrorEvent(new ErrorEventArgs(ex, null));
             }
+        }
+
+
+        /// <summary>
+        /// Socket Receive Thread
+        /// </summary>
+        /// <param name="asyn"></param>
+        private void OnReceiveHistorical(IAsyncResult asyn)
+        {
+            var receivedBytes = _socket.EndReceive(asyn);
+            var packet = new byte[receivedBytes];
+            Buffer.BlockCopy(_buffer, 0, packet, 0, receivedBytes);
+            _historicalDataQueue.Enqueue(packet);
         }
 
         #endregion
@@ -390,48 +450,48 @@ namespace QANT.DTC
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void _heartbeatTimer_Elapsed(object sender, ElapsedEventArgs e)
+    {
+        if (_isHistorical) return;                      // No Heartbeats for Historical Requests
+
+        // Stop the Timer
+        _heartbeatTimer.Stop();
+
+        if (!_socket.Connected) return;
+
+        // Send Heartbeat Msg
+        var request = new Messages.Heartbeat();
+        SendData(request);
+
+        // Heartbeat Management
+        _heartbeatSendCount++;
+
+        if (_heartbeatsMissed > 0)
         {
-            if (_isHistorical) return;                      // No Heartbeats for Historical Requests
-
-            // Stop the Timer
-            _heartbeatTimer.Stop();
-
-            if (!_socket.Connected) return;
-
-            // Send Heartbeat Msg
-            var request = new Messages.Heartbeat();
-            SendData(request);
-
-            // Heartbeat Management
-            _heartbeatSendCount++;
-
-            if (_heartbeatsMissed > 0)
-            {
-                var errmsg = "WARNING - " + _heartbeatsMissed + " Heartbeats have been Missed";
-                OnErrorEvent(new ErrorEventArgs(null, errmsg));
-            }
-
-            // Check for Heartbeat Errors
-            _heartbeatsMissed += Math.Abs(_heartbeatSendCount - _heartbeatReceiveCount);
-            if (_heartbeatsMissed > Protocol.HeartbeatLossMaximum)
-            {
-                var msg = $"Exceeded HEARTBEAT_LOSS_MAXIMUM {Protocol.HeartbeatLossMaximum}";
-                OnErrorEvent(new ErrorEventArgs(null, msg));
-                Disconnect();
-            }
-
-            // Restart the Timer
-            _heartbeatTimer.Start();
+            var errmsg = "WARNING - " + _heartbeatsMissed + " Heartbeats have been Missed";
+            OnErrorEvent(new ErrorEventArgs(null, errmsg));
         }
 
-        #endregion
+        // Check for Heartbeat Errors
+        _heartbeatsMissed += Math.Abs(_heartbeatSendCount - _heartbeatReceiveCount);
+        if (_heartbeatsMissed > Protocol.HeartbeatLossMaximum)
+        {
+            var msg = $"Exceeded HEARTBEAT_LOSS_MAXIMUM {Protocol.HeartbeatLossMaximum}";
+            OnErrorEvent(new ErrorEventArgs(null, msg));
+            Disconnect();
+        }
+
+        // Restart the Timer
+        _heartbeatTimer.Start();
+    }
+
+    #endregion
 
         #region Queue Management
 
         private void _sendWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (true)
-            { 
+            {
                 while (_sendQueue.Count > 0)
                 {
                     // Dequeue
@@ -517,7 +577,14 @@ namespace QANT.DTC
                                     // Flag Login as Complete
                                     _loginComplete = true;
 
-                                    if (!_isHistorical)                                 // No Heartbeats for Historical Requests
+                                    if (_isHistorical)
+                                    {
+                                        _isReadyForHistorical = true;
+                                        _callback = OnReceiveHistorical;
+                                        _socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, _callback, null);
+                                        OnReadyForHistoricalDataRequestEvent();
+                                    }
+                                    else
                                         _heartbeatTimer.Start();
                                 }
                                 break;

@@ -9,9 +9,11 @@ namespace QANT.DTC
         // General Purpose Constants
         public const string ProtocolType = "DTC";
         public const int CurrentVersion = 8;
-        public const int HeartbeatInterval = 15;               // Seconds
-        public const int HeartbeatLossMaximum = 4;            // Max. Allowed Heartbeat Send/Receive Diff.
-        public const int BufferSize = 8192;                    // DTC Socket Receive Buffer Size (Bytes)
+        public const int HeartbeatInterval = 15;                // Seconds
+        public const int HeartbeatLossMaximum = 4;              // Max. Allowed Heartbeat Send/Receive Diff.
+
+        public const int BufferSize = 8192;                     // DTC Socket Receive Buffer Size (8K)
+        public const int HistoricalBufferSize = 134217728;      // DTC Historical Socket Receive Buffer Size (128 MB)
 
         // Text string lengths. 
         public const int UsernamePasswordLength = 32;
@@ -31,7 +33,5 @@ namespace QANT.DTC
         public const int GeneralIdentifierLength = 64;
         public const int ReconnectAddressLength = 64;
         public const int ServerNameLength = 60;
-
-
     }
 }

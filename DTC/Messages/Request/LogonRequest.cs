@@ -45,7 +45,8 @@ namespace QANT.DTC
             /// </summary>
             /// <param name="user"></param>
             /// <param name="password"></param>
-            public LogonRequest(string user, string password)
+            /// <param name="isHistorical"></param>
+            public LogonRequest(string user, string password, bool isHistorical = false)
             {
                 // Header
                 Type = Protocol.MessageType.LogonRequest;
@@ -57,7 +58,7 @@ namespace QANT.DTC
                 GeneralTextData = "QANT C# DTC Client";
                 Integer_1 = 0;
                 Integer_2 = 0;
-                HeartbeatIntervalInSeconds = Protocol.HeartbeatInterval;
+                HeartbeatIntervalInSeconds = isHistorical ? 0 : Protocol.HeartbeatInterval;
                 TradeMode = Protocol.TradeMode.TradeModeUnset;
                 TradeAccount = "";
                 HardwareIdentifier = "";

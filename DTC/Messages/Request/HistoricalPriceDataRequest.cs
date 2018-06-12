@@ -25,7 +25,7 @@ namespace QANT.DTC
             //uint8_t Flag_1;
             #endregion
 
-            public int RequestId { get; }
+            public int RequestID { get; }
             public string Symbol { get; }
             public string Exchange { get; }
             public Protocol.HistoricalDataInterval RecordInterval { get; }
@@ -38,7 +38,7 @@ namespace QANT.DTC
 
             /// <inheritdoc />
             public HistoricalPriceDataRequest(
-                int id, 
+                int requestId, 
                 string symbol, 
                 string exchange, 
                 Protocol.HistoricalDataInterval interval,
@@ -49,39 +49,13 @@ namespace QANT.DTC
                 Type = Protocol.MessageType.HistoricalPriceDataRequest;
 
                 // Payload
-                RequestId = id;
+                RequestID = requestId;
                 Symbol = symbol;
                 Exchange = exchange;
                 RecordInterval = interval;
                 StartDateTime = Utils.UnixDateTime(start);
                 EndDateTime = Utils.UnixDateTime(end);
-                MaxDaysToReturn = 0;
-                UseZLibCompression = 0;
-                RequestDividendAdjustedStockData = 0;
-                Flag_1 = 0;
-            }
-
-            /// <summary>
-            /// Historical Price Data Request Msg
-            /// </summary>
-            public HistoricalPriceDataRequest(
-                int id,
-                string symbol,
-                string exchange,
-                Protocol.HistoricalDataInterval interval,
-                uint numDays)
-            {
-                // Header
-                Type = Protocol.MessageType.HistoricalPriceDataRequest;
-
-                // Payload
-                RequestId = id;
-                Symbol = symbol;
-                Exchange = exchange;
-                RecordInterval = interval;
-                StartDateTime = Utils.CurrentUnixDateTime();
-                EndDateTime = Utils.CurrentUnixDateTime();
-                MaxDaysToReturn = numDays;
+                MaxDaysToReturn = uint.MaxValue;
                 UseZLibCompression = 0;
                 RequestDividendAdjustedStockData = 0;
                 Flag_1 = 0;

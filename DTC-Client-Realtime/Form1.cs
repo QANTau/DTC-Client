@@ -14,6 +14,12 @@ namespace QANT.DTC
 
         private readonly Dictionary<string, int> _realtimeSymbolsData;
 
+        private Client _hstClient;
+        private string _hstSymbol;
+        private Protocol.HistoricalDataInterval _hstInterval;
+        private DateTime _hstStartDate;
+        private DateTime _hstEndDate;
+
         public Form1()
         {
             InitializeComponent();
@@ -24,11 +30,19 @@ namespace QANT.DTC
             LoadConnectionSettingsHistorical();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            foreach (var item in Enum.GetValues(typeof(Protocol.HistoricalDataInterval)))
+                cmbInterval.Items.Add(item.ToString());
+
+            cmbInterval.SelectedIndex = 7;
+        }
+
         #region Connection Management
 
         private void cmdConnDisconn_Click(object sender, EventArgs e)
         {
-            bool isConnected = false;
+            var isConnected = false;
 
             if (_client != null)
                 if (_client.IsConnected)
@@ -144,7 +158,80 @@ namespace QANT.DTC
 
         #endregion
 
-        #region External Events
+        #region Historical Data
+
+        private void cmdRequestHistoricalData_Click(object sender, EventArgs e)
+        {
+            // Setup DTC Client
+            _hstClient = new Client(true);
+            _hstClient.OnConnect += HstClientOnConnect;
+            _hstClient.OnDisconnect += HstClientOnDisconnect;
+
+            _hstClient.OnError += ClientOnError;
+            _hstClient.OnInformation += ClientOnInformation;
+
+            _hstClient.OnReadyForHistoricalDataRequest += HstClientOnReadyForHistoricalDataRequest;
+
+            _hstClient.OnMessageSend += ClientOnMessageSend;
+            _hstClient.OnMessageReceive += ClientOnMessageReceive;
+            _hstClient.OnRawMessageSend += ClientOnRawMessageSend;
+            _hstClient.OnRawMessageReceive += ClientOnRawMessageReceive;
+
+            // TODO - Historical Data Receive
+
+            // Historical Data Filter
+            _hstSymbol = txtHistoricalSymbol.Text.Trim().ToUpper();
+            _hstInterval = (Protocol.HistoricalDataInterval)Enum.Parse(typeof(Protocol.HistoricalDataInterval), 
+                cmbInterval.SelectedItem.ToString());
+            _hstStartDate = dtpStartDate.Value;
+            _hstEndDate = dtpEndDate.Value;
+
+            // IP Address & Port
+            var ipAddress = txtHostHistorical.Text.Trim();
+            short.TryParse(txtPortHistorical.Text, out var port);
+            var username = txtUsernameHistorical.Text.Trim();
+            var password = txtPasswordHistorical.Text.Trim();
+
+            SetCmdRequestHistoricalDataStatus(false);
+
+            // Connect
+            _hstClient.Connect(ipAddress, port, username, password);
+        }
+
+        private void HstClientOnReadyForHistoricalDataRequest(object sender, EventArgs e)
+        {
+            cmdRequestHistoricalData.Enabled = false;
+
+            AppendActivityLog("Requesting Historical Data for " + _hstSymbol + " (Request ID " + _requestId + ")");
+
+            _hstClient.RequestHistoricalData(_hstSymbol, _requestId, _hstInterval, _hstStartDate, _hstEndDate);
+            _requestId++;
+        }
+
+        private void HstClientOnConnect(object sender, EventArgs e)
+        {
+            AppendActivityLog("Historical Client Connected");
+        }
+
+        private void HstClientOnDisconnect(object sender, EventArgs e)
+        {
+            AppendActivityLog("Historical Client Disconnected");
+        }
+
+        public void SetCmdRequestHistoricalDataStatus(bool status)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<bool>(SetCmdRequestHistoricalDataStatus), status);
+                return;
+            }
+
+            cmdRequestHistoricalData.Enabled = status;
+        }
+
+        #endregion
+
+        #region Callbacks
 
         private void ClientOnConnect(object sender, EventArgs e)
         {
@@ -382,7 +469,12 @@ namespace QANT.DTC
             { }
         }
 
+
         #endregion
 
+        private void button4_Click(object sender, EventArgs e)
+        {
+            _hstClient?.ProcessHistoricalData();
+        }
     }
 }

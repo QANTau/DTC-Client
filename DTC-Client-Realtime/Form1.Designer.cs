@@ -93,6 +93,16 @@ namespace QANT.DTC
             this.button3 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.cmbInterval = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.dtpStartDate = new System.Windows.Forms.DateTimePicker();
+            this.dtpEndDate = new System.Windows.Forms.DateTimePicker();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.cmdRequestHistoricalData = new System.Windows.Forms.Button();
+            this.txtHistoricalSymbol = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -569,9 +579,9 @@ namespace QANT.DTC
             this.chkFilterHeartbeats.AutoSize = true;
             this.chkFilterHeartbeats.Location = new System.Drawing.Point(8, 42);
             this.chkFilterHeartbeats.Name = "chkFilterHeartbeats";
-            this.chkFilterHeartbeats.Size = new System.Drawing.Size(208, 17);
+            this.chkFilterHeartbeats.Size = new System.Drawing.Size(209, 17);
             this.chkFilterHeartbeats.TabIndex = 7;
-            this.chkFilterHeartbeats.Text = "Excluse Heartbeats from Message Log";
+            this.chkFilterHeartbeats.Text = "Exclude Heartbeats from Message Log";
             this.chkFilterHeartbeats.UseVisualStyleBackColor = true;
             // 
             // chkDisplayRaw
@@ -588,6 +598,16 @@ namespace QANT.DTC
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.button4);
+            this.groupBox3.Controls.Add(this.txtHistoricalSymbol);
+            this.groupBox3.Controls.Add(this.label14);
+            this.groupBox3.Controls.Add(this.cmdRequestHistoricalData);
+            this.groupBox3.Controls.Add(this.label13);
+            this.groupBox3.Controls.Add(this.label12);
+            this.groupBox3.Controls.Add(this.dtpEndDate);
+            this.groupBox3.Controls.Add(this.dtpStartDate);
+            this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Controls.Add(this.cmbInterval);
             this.groupBox3.Controls.Add(this.txtPasswordHistorical);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.txtUsernameHistorical);
@@ -598,14 +618,13 @@ namespace QANT.DTC
             this.groupBox3.Controls.Add(this.label9);
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(273, 120);
+            this.groupBox3.Size = new System.Drawing.Size(273, 280);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Historical Data";
             // 
             // txtPasswordHistorical
             // 
-            this.txtPasswordHistorical.Enabled = false;
             this.txtPasswordHistorical.Location = new System.Drawing.Point(167, 91);
             this.txtPasswordHistorical.Name = "txtPasswordHistorical";
             this.txtPasswordHistorical.PasswordChar = '*';
@@ -623,7 +642,6 @@ namespace QANT.DTC
             // 
             // txtUsernameHistorical
             // 
-            this.txtUsernameHistorical.Enabled = false;
             this.txtUsernameHistorical.Location = new System.Drawing.Point(167, 67);
             this.txtUsernameHistorical.Name = "txtUsernameHistorical";
             this.txtUsernameHistorical.Size = new System.Drawing.Size(100, 20);
@@ -631,7 +649,6 @@ namespace QANT.DTC
             // 
             // txtPortHistorical
             // 
-            this.txtPortHistorical.Enabled = false;
             this.txtPortHistorical.Location = new System.Drawing.Point(167, 43);
             this.txtPortHistorical.Name = "txtPortHistorical";
             this.txtPortHistorical.Size = new System.Drawing.Size(100, 20);
@@ -640,7 +657,6 @@ namespace QANT.DTC
             // 
             // txtHostHistorical
             // 
-            this.txtHostHistorical.Enabled = false;
             this.txtHostHistorical.Location = new System.Drawing.Point(167, 19);
             this.txtHostHistorical.Name = "txtHostHistorical";
             this.txtHostHistorical.Size = new System.Drawing.Size(100, 20);
@@ -787,6 +803,96 @@ namespace QANT.DTC
             this.label10.TabIndex = 7;
             this.label10.Text = "Symbol";
             // 
+            // cmbInterval
+            // 
+            this.cmbInterval.FormattingEnabled = true;
+            this.cmbInterval.Location = new System.Drawing.Point(130, 139);
+            this.cmbInterval.Name = "cmbInterval";
+            this.cmbInterval.Size = new System.Drawing.Size(137, 21);
+            this.cmbInterval.TabIndex = 5;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(8, 142);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(42, 13);
+            this.label11.TabIndex = 17;
+            this.label11.Text = "Interval";
+            // 
+            // dtpStartDate
+            // 
+            this.dtpStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpStartDate.Location = new System.Drawing.Point(167, 164);
+            this.dtpStartDate.Name = "dtpStartDate";
+            this.dtpStartDate.Size = new System.Drawing.Size(100, 20);
+            this.dtpStartDate.TabIndex = 6;
+            this.dtpStartDate.Value = new System.DateTime(2018, 6, 1, 0, 0, 0, 0);
+            // 
+            // dtpEndDate
+            // 
+            this.dtpEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpEndDate.Location = new System.Drawing.Point(167, 188);
+            this.dtpEndDate.Name = "dtpEndDate";
+            this.dtpEndDate.Size = new System.Drawing.Size(100, 20);
+            this.dtpEndDate.TabIndex = 7;
+            this.dtpEndDate.Value = new System.DateTime(2018, 6, 30, 0, 0, 0, 0);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(8, 166);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(55, 13);
+            this.label12.TabIndex = 20;
+            this.label12.Text = "Start Date";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(8, 190);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(52, 13);
+            this.label13.TabIndex = 21;
+            this.label13.Text = "End Date";
+            // 
+            // cmdRequestHistoricalData
+            // 
+            this.cmdRequestHistoricalData.Location = new System.Drawing.Point(8, 214);
+            this.cmdRequestHistoricalData.Name = "cmdRequestHistoricalData";
+            this.cmdRequestHistoricalData.Size = new System.Drawing.Size(259, 23);
+            this.cmdRequestHistoricalData.TabIndex = 8;
+            this.cmdRequestHistoricalData.Text = "Request Data";
+            this.cmdRequestHistoricalData.UseVisualStyleBackColor = true;
+            this.cmdRequestHistoricalData.Click += new System.EventHandler(this.cmdRequestHistoricalData_Click);
+            // 
+            // txtHistoricalSymbol
+            // 
+            this.txtHistoricalSymbol.Location = new System.Drawing.Point(167, 115);
+            this.txtHistoricalSymbol.Name = "txtHistoricalSymbol";
+            this.txtHistoricalSymbol.Size = new System.Drawing.Size(100, 20);
+            this.txtHistoricalSymbol.TabIndex = 4;
+            this.txtHistoricalSymbol.Text = "AUDUSD";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(8, 118);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(41, 13);
+            this.label14.TabIndex = 23;
+            this.label14.Text = "Symbol";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(8, 243);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(259, 23);
+            this.button4.TabIndex = 24;
+            this.button4.Text = "Break !!";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -799,6 +905,7 @@ namespace QANT.DTC
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DTC Client";
+            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -902,6 +1009,16 @@ namespace QANT.DTC
         private Button button3;
         private TextBox textBox1;
         private Label label10;
+        private Button cmdRequestHistoricalData;
+        private Label label13;
+        private Label label12;
+        private DateTimePicker dtpEndDate;
+        private DateTimePicker dtpStartDate;
+        private Label label11;
+        private ComboBox cmbInterval;
+        private TextBox txtHistoricalSymbol;
+        private Label label14;
+        private Button button4;
     }
 }
 
