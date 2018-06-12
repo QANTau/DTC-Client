@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -15,7 +16,7 @@ namespace QANT.DTC
             //char RejectText[TEXT_DESCRIPTION_LENGTH];
             #endregion
 
-            public int RequestId { get; set; }
+            public int RequestID { get; set; }
             public string RejectText { get; set; }
         }
 

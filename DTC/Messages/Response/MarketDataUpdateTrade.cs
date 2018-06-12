@@ -1,7 +1,9 @@
-﻿using System;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -19,7 +21,7 @@ namespace QANT.DTC
             //t_DateTimeWithMilliseconds DateTime;
             #endregion
 
-            public int SymbolId { get; set; }
+            public uint SymbolID { get; set; }
             public Protocol.AtBidOrAsk AtBidOrAskEnum { get; set; }
             public double Price { get; set; }
             public double Volume { get; set; }

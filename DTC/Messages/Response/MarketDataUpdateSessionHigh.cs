@@ -7,9 +7,9 @@ namespace QANT.DTC
     {
         /// <inheritdoc />
         /// <summary>
-        /// Market Data Update Session Message
+        /// Market Data Update Session High Message
         /// </summary>
-        public class MarketDataUpdateSessionLow : JsonHeader
+        public class MarketDataUpdateSessionHigh : JsonHeader
         {
 
             #region C++ Struct
@@ -26,14 +26,14 @@ namespace QANT.DTC
 
         /// <inheritdoc />
         /// <summary>
-        /// Market Data Update Session (Integer) Message
+        /// Market Data Update Session High Message
         /// </summary>
-        public class MarketDataUpdateSessionLowInt : JsonHeader
+        public class MarketDataUpdateSessionHighInt : JsonHeader
         {
 
             #region C++ Struct
             //uint32_t SymbolID;
-            //int32_t Price;
+            //int Price;
             //t_DateTime4Byte TradingSessionDate;
             #endregion
 

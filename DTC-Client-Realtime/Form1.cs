@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace QANT.DTC
 {
@@ -9,61 +10,50 @@ namespace QANT.DTC
     {
         private const string RegistryKey = "SOFTWARE\\DTC-Client";
 
-        private Client _client;
+        private DataClient _dataClient;
         private int _requestId = 1;
 
         private readonly Dictionary<string, int> _realtimeSymbolsData;
-
-        private Client _hstClient;
-        private string _hstSymbol;
-        private Protocol.HistoricalDataInterval _hstInterval;
-        private DateTime _hstStartDate;
-        private DateTime _hstEndDate;
 
         public Form1()
         {
             InitializeComponent();
 
             _realtimeSymbolsData = new Dictionary<string, int>();
-
-            LoadConnectionSettings();
-            LoadConnectionSettingsHistorical();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            foreach (var item in Enum.GetValues(typeof(Protocol.HistoricalDataInterval)))
-                cmbInterval.Items.Add(item.ToString());
-
-            cmbInterval.SelectedIndex = 7;
+            LoadConnectionSettings();
+            LoadConnectionSettingsHistorical();
         }
 
         #region Connection Management
 
-        private void cmdConnDisconn_Click(object sender, EventArgs e)
+        private void CmdConnDisconn_Click(object sender, EventArgs e)
         {
             var isConnected = false;
 
-            if (_client != null)
-                if (_client.IsConnected)
+            if (_dataClient != null)
+                if (_dataClient.IsConnected)
                     isConnected = true;
 
             if (!isConnected)
             {
-                // Setup DTC Client
-                _client = new Client();
-                _client.OnConnect += ClientOnConnect;
-                _client.OnDisconnect += ClientOnDisconnect;
+                // Setup DTC DataClient
+                _dataClient = new DataClient();
+                _dataClient.OnConnect += DataClientOnConnect;
+                _dataClient.OnDisconnect += DataClientOnDisconnect;
 
+                _dataClient.OnError += DataClientOnError;
+                _dataClient.OnInformation += DataClientOnInformation;
 
-                _client.OnError += ClientOnError;
-                _client.OnInformation += ClientOnInformation;
+                _dataClient.OnMarketDataBidAsk += DataClientOnMarketDataBidAsk;
 
-
-                _client.OnMessageSend += ClientOnMessageSend;
-                _client.OnMessageReceive += ClientOnMessageReceive;
-                _client.OnRawMessageSend += ClientOnRawMessageSend;
-                _client.OnRawMessageReceive += ClientOnRawMessageReceive;
+                _dataClient.OnMessageSend += DataClientOnMessageSend;
+                _dataClient.OnMessageReceive += DataClientOnMessageReceive;
+                _dataClient.OnRawMessageSend += DataClientOnRawMessageSend;
+                _dataClient.OnRawMessageReceive += DataClientOnRawMessageReceive;
 
                 // IP Address & Port
                 var ipAddress = txtHost.Text.Trim();
@@ -72,11 +62,11 @@ namespace QANT.DTC
                 var password = txtPassword.Text.Trim();
 
                 // Connect
-                _client.Connect(ipAddress, port, username, password);
+                _dataClient.Connect(ipAddress, port, username, password);
             }
             else
             {
-                _client.Disconnect();
+                _dataClient.Disconnect();
             }
         }
 
@@ -88,23 +78,23 @@ namespace QANT.DTC
                 return;
             }
 
-            cmdConnDisconn.Text = _client.IsConnected ? @"Disconnect" : @"Connect";
+            cmdConnDisconn.Text = _dataClient.IsConnected ? @"Disconnect" : @"Connect";
         }
 
         #endregion
 
         #region Securities/Symbols
 
-        private void cmdSymbolInfoRequest_Click(object sender, EventArgs e)
+        private void CmdSymbolInfoRequest_Click(object sender, EventArgs e)
         {
-            if (_client == null)
+            if (_dataClient == null)
                 return;
 
             var symbol = txtSymbolInfo.Text.Trim().ToUpper();
 
             AppendActivityLog("Requesting Information for " + symbol + " (Request ID " + _requestId + ")");
 
-            _client.RequestSymbolDefinition(_requestId, symbol);
+            _dataClient.RequestSymbolDefinition(_requestId, symbol);
             _requestId++;
         }
 
@@ -112,9 +102,9 @@ namespace QANT.DTC
 
         #region Real Time Data
 
-        private void cmdSubscribe_Click(object sender, EventArgs e)
+        private void CmdSubscribe_Click(object sender, EventArgs e)
         {
-            if (_client == null)
+            if (_dataClient == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
@@ -123,14 +113,14 @@ namespace QANT.DTC
 
             AppendActivityLog("Subscribing to " + symbol + " (Request ID " + _requestId + ")");
 
-            _client.RequestMarketData(symbol, _requestId);
+            _dataClient.RequestMarketData(symbol, _requestId);
             _realtimeSymbolsData.Add(symbol, _requestId);
             _requestId++;
         }
 
-        private void cmdUnsubscribe_Click(object sender, EventArgs e)
+        private void CmdUnsubscribe_Click(object sender, EventArgs e)
         {
-            if (_client == null)
+            if (_dataClient == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
@@ -139,120 +129,52 @@ namespace QANT.DTC
 
             AppendActivityLog("Unsubscribing from " + symbol);
 
-            _client.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
+            _dataClient.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
             _realtimeSymbolsData.Remove(symbol);
         }
 
-        private void cmdSnapshot_Click(object sender, EventArgs e)
+        private void CmdSnapshot_Click(object sender, EventArgs e)
         {
-            if (_client == null)
+            if (_dataClient == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
 
             AppendActivityLog("Requesting Snapshot for " + symbol + " (Request ID " + _requestId + ")");
 
-            _client.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
+            _dataClient.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
             _requestId++;
-        }
-
-        #endregion
-
-        #region Historical Data
-
-        private void cmdRequestHistoricalData_Click(object sender, EventArgs e)
-        {
-            // Setup DTC Client
-            _hstClient = new Client(true);
-            _hstClient.OnConnect += HstClientOnConnect;
-            _hstClient.OnDisconnect += HstClientOnDisconnect;
-
-            _hstClient.OnError += ClientOnError;
-            _hstClient.OnInformation += ClientOnInformation;
-
-            _hstClient.OnReadyForHistoricalDataRequest += HstClientOnReadyForHistoricalDataRequest;
-
-            _hstClient.OnMessageSend += ClientOnMessageSend;
-            _hstClient.OnMessageReceive += ClientOnMessageReceive;
-            _hstClient.OnRawMessageSend += ClientOnRawMessageSend;
-            _hstClient.OnRawMessageReceive += ClientOnRawMessageReceive;
-
-            // TODO - Historical Data Receive
-
-            // Historical Data Filter
-            _hstSymbol = txtHistoricalSymbol.Text.Trim().ToUpper();
-            _hstInterval = (Protocol.HistoricalDataInterval)Enum.Parse(typeof(Protocol.HistoricalDataInterval), 
-                cmbInterval.SelectedItem.ToString());
-            _hstStartDate = dtpStartDate.Value;
-            _hstEndDate = dtpEndDate.Value;
-
-            // IP Address & Port
-            var ipAddress = txtHostHistorical.Text.Trim();
-            short.TryParse(txtPortHistorical.Text, out var port);
-            var username = txtUsernameHistorical.Text.Trim();
-            var password = txtPasswordHistorical.Text.Trim();
-
-            SetCmdRequestHistoricalDataStatus(false);
-
-            // Connect
-            _hstClient.Connect(ipAddress, port, username, password);
-        }
-
-        private void HstClientOnReadyForHistoricalDataRequest(object sender, EventArgs e)
-        {
-            cmdRequestHistoricalData.Enabled = false;
-
-            AppendActivityLog("Requesting Historical Data for " + _hstSymbol + " (Request ID " + _requestId + ")");
-
-            _hstClient.RequestHistoricalData(_hstSymbol, _requestId, _hstInterval, _hstStartDate, _hstEndDate);
-            _requestId++;
-        }
-
-        private void HstClientOnConnect(object sender, EventArgs e)
-        {
-            AppendActivityLog("Historical Client Connected");
-        }
-
-        private void HstClientOnDisconnect(object sender, EventArgs e)
-        {
-            AppendActivityLog("Historical Client Disconnected");
-        }
-
-        public void SetCmdRequestHistoricalDataStatus(bool status)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new Action<bool>(SetCmdRequestHistoricalDataStatus), status);
-                return;
-            }
-
-            cmdRequestHistoricalData.Enabled = status;
         }
 
         #endregion
 
         #region Callbacks
 
-        private void ClientOnConnect(object sender, EventArgs e)
+        private void DataClientOnConnect(object sender, EventArgs e)
         {
             AppendActivityLog("Connected");
 
             SetConnDisconnStatus();
         }
 
-        private void ClientOnDisconnect(object sender, EventArgs e)
+        private void DataClientOnDisconnect(object sender, EventArgs e)
         {
             AppendActivityLog("Disconnected");
         }
 
-        private void ClientOnInformation(object sender, Client.MessageEventArgs e)
+        private void DataClientOnInformation(object sender, MessageEventArgs e)
         {
             AppendActivityLog(e.Message);
         }
 
-        private void ClientOnError(object sender, Client.ErrorEventArgs e)
+        private void DataClientOnError(object sender, ErrorEventArgs e)
         {
             AppendErrorLog(e.Exception == null ? e.Message : e.Exception.Message);
+        }
+
+        private void DataClientOnMarketDataBidAsk(object sender, Messages.MarketDataUpdateBidAsk e)
+        {
+            AppendRealTime(JsonConvert.SerializeObject(e));
         }
 
         private bool MessageFilter(string message)
@@ -262,20 +184,22 @@ namespace QANT.DTC
 
             // ReSharper disable once ConvertIfStatementToReturnStatement
             if (chkFilterRealtime.Checked && 
-                (message == "MarketDataUpdateBidAskCompact" ||
+                (message == "MarketDataUpdateBidAsk" ||
+                 message == "MarketDataUpdateBidAskCompact" ||
+                 message == "MarketDataUpdateTrade" ||
                  message == "MarketDataUpdateTradeCompact"))
                 return false;
 
             return true;
         }
 
-        private void ClientOnMessageSend(object sender, Client.MessageEventArgs e)
+        private void DataClientOnMessageSend(object sender, MessageEventArgs e)
         {
             if (MessageFilter(e.Message))
                 AppendSendLog(e.Message);
         }
 
-        private void ClientOnRawMessageSend(object sender, Client.RawMessageEventArgs e)
+        private void DataClientOnRawMessageSend(object sender, RawMessageEventArgs e)
         {
             if (!chkDisplayRaw.Checked) return;
 
@@ -286,13 +210,13 @@ namespace QANT.DTC
             AppendSendLogRaw(e.MessageType + " - " + Utils.GetString(packet));
         }
 
-        private void ClientOnMessageReceive(object sender, Client.MessageEventArgs e)
+        private void DataClientOnMessageReceive(object sender, MessageEventArgs e)
         {
             if (MessageFilter(e.Message))
                 AppendReceiveLog(e.Message);
         }
 
-        private void ClientOnRawMessageReceive(object sender, Client.RawMessageEventArgs e)
+        private void DataClientOnRawMessageReceive(object sender, RawMessageEventArgs e)
         {
             if (!chkDisplayRaw.Checked) return;
 
@@ -462,8 +386,6 @@ namespace QANT.DTC
                 if (key == null) return;
                 txtHostHistorical.Text = key.GetValue("HostHistorical").ToString();
                 txtPortHistorical.Text = key.GetValue("PortHistorical").ToString();
-                txtUsernameHistorical.Text = key.GetValue("UsernameHistorical").ToString();
-                txtPasswordHistorical.Text = key.GetValue("PasswordHistorical").ToString();
             }
             catch
             { }
@@ -472,9 +394,5 @@ namespace QANT.DTC
 
         #endregion
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            _hstClient?.ProcessHistoricalData();
-        }
     }
 }

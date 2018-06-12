@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
@@ -7,9 +8,9 @@ namespace QANT.DTC
     {
         /// <inheritdoc />
         /// <summary>
-        /// Market Data Update Session Message
+        /// Market Data Update Session Settlement Message
         /// </summary>
-        public class MarketDataUpdateSessionLow : JsonHeader
+        public class MarketDataUpdateSessionSettlement : JsonHeader
         {
 
             #region C++ Struct
@@ -20,15 +21,15 @@ namespace QANT.DTC
 
             public uint SymbolID { get; set; }
             public double Price { get; set; }
-            public int TradingSessionDate { get; set; }
+            public int DateTime { get; set; }
 
         }
 
         /// <inheritdoc />
         /// <summary>
-        /// Market Data Update Session (Integer) Message
+        /// Market Data Update Session Settlement Message
         /// </summary>
-        public class MarketDataUpdateSessionLowInt : JsonHeader
+        public class MarketDataUpdateSessionSettlementInt : JsonHeader
         {
 
             #region C++ Struct
@@ -39,8 +40,9 @@ namespace QANT.DTC
 
             public uint SymbolID { get; set; }
             public int Price { get; set; }
-            public int TradingSessionDate { get; set; }
+            public int DateTime { get; set; }
 
         }
+
     }
 }

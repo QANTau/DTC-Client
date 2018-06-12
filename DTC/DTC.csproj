@@ -42,11 +42,12 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\Client.cs" />
-    <Compile Include="Client\ErrorEventArgs.cs" />
-    <Compile Include="Client\MessageEventArgs.cs" />
-    <Compile Include="Client\RawMessageEventArgs.cs" />
-    <Compile Include="Client\SymbolLookupEventArgs.cs" />
+    <Compile Include="Clients\DataClient.cs" />
+    <Compile Include="EventArgs\ErrorEventArgs.cs" />
+    <Compile Include="Clients\HistoricalClient.cs" />
+    <Compile Include="EventArgs\MessageEventArgs.cs" />
+    <Compile Include="EventArgs\RawMessageEventArgs.cs" />
+    <Compile Include="EventArgs\SymbolLookupEventArgs.cs" />
     <Compile Include="Messages\JsonHeader.cs" />
     <Compile Include="Messages\Binary\EncodingRequest.cs" />
     <Compile Include="Messages\Request\MarketDepthRequest.cs" />
@@ -63,10 +64,15 @@
     <Compile Include="Messages\Response\LogonResponse.cs" />
     <Compile Include="Messages\Request\MarketDataRequest.cs" />
     <Compile Include="Messages\Response\MarketDataSnapshot.cs" />
-    <Compile Include="Messages\Response\MarketDataUpdateBidAskCompact.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateBidAsk.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateLastTradeSnapshot.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionHigh.cs" />
     <Compile Include="Messages\Response\MarketDataUpdateSessionLow.cs" />
-    <Compile Include="Messages\Response\MarketDataUpdateSessionLowInt.cs" />
-    <Compile Include="Messages\Response\MarketDataUpdateTradeCompact.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionNumTrades.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionOpen.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionSettlement.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateSessionVolume.cs" />
+    <Compile Include="Messages\Response\MarketDataUpdateTrade.cs" />
     <Compile Include="Messages\Request\SecurityDefinitionForSymbolRequest.cs" />
     <Compile Include="Messages\Response\SecurityDefinitionReject.cs" />
     <Compile Include="Messages\Response\SecurityDefinitionResponse.cs" />

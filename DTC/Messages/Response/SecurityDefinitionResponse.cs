@@ -1,9 +1,11 @@
-﻿using System;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
 
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -40,7 +42,7 @@ namespace QANT.DTC
             //char ExchangeSymbol[SYMBOL_LENGTH];
             #endregion
 
-            public int RequestId { get; set; }
+            public int RequestID { get; set; }
             public string Symbol { get; set; }
             public string Exchange { get; set; }
             public Protocol.SecurityType SecurityType { get; set; }

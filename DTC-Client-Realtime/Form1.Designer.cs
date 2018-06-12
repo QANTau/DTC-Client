@@ -182,7 +182,7 @@ namespace QANT.DTC
             this.cmdConnDisconn.TabIndex = 6;
             this.cmdConnDisconn.Text = "Connect";
             this.cmdConnDisconn.UseVisualStyleBackColor = true;
-            this.cmdConnDisconn.Click += new System.EventHandler(this.cmdConnDisconn_Click);
+            this.cmdConnDisconn.Click += new System.EventHandler(this.CmdConnDisconn_Click);
             // 
             // txtUsername
             // 
@@ -256,7 +256,7 @@ namespace QANT.DTC
             this.cmdSnapshot.TabIndex = 5;
             this.cmdSnapshot.Text = "Snapshot";
             this.cmdSnapshot.UseVisualStyleBackColor = true;
-            this.cmdSnapshot.Click += new System.EventHandler(this.cmdSnapshot_Click);
+            this.cmdSnapshot.Click += new System.EventHandler(this.CmdSnapshot_Click);
             // 
             // cmdUnsubscribe
             // 
@@ -266,7 +266,7 @@ namespace QANT.DTC
             this.cmdUnsubscribe.TabIndex = 4;
             this.cmdUnsubscribe.Text = "Unsubscribe";
             this.cmdUnsubscribe.UseVisualStyleBackColor = true;
-            this.cmdUnsubscribe.Click += new System.EventHandler(this.cmdUnsubscribe_Click);
+            this.cmdUnsubscribe.Click += new System.EventHandler(this.CmdUnsubscribe_Click);
             // 
             // cmdSubscribe
             // 
@@ -276,7 +276,7 @@ namespace QANT.DTC
             this.cmdSubscribe.TabIndex = 3;
             this.cmdSubscribe.Text = "Subscribe";
             this.cmdSubscribe.UseVisualStyleBackColor = true;
-            this.cmdSubscribe.Click += new System.EventHandler(this.cmdSubscribe_Click);
+            this.cmdSubscribe.Click += new System.EventHandler(this.CmdSubscribe_Click);
             // 
             // txtSymbolRT
             // 
@@ -508,7 +508,7 @@ namespace QANT.DTC
             this.cmdSymbolInfoRequest.TabIndex = 1;
             this.cmdSymbolInfoRequest.Text = "Request Symbol Information";
             this.cmdSymbolInfoRequest.UseVisualStyleBackColor = true;
-            this.cmdSymbolInfoRequest.Click += new System.EventHandler(this.cmdSymbolInfoRequest_Click);
+            this.cmdSymbolInfoRequest.Click += new System.EventHandler(this.CmdSymbolInfoRequest_Click);
             // 
             // txtSymbolInfo
             // 
@@ -864,7 +864,6 @@ namespace QANT.DTC
             this.cmdRequestHistoricalData.TabIndex = 8;
             this.cmdRequestHistoricalData.Text = "Request Data";
             this.cmdRequestHistoricalData.UseVisualStyleBackColor = true;
-            this.cmdRequestHistoricalData.Click += new System.EventHandler(this.cmdRequestHistoricalData_Click);
             // 
             // txtHistoricalSymbol
             // 
@@ -891,7 +890,6 @@ namespace QANT.DTC
             this.button4.TabIndex = 24;
             this.button4.Text = "Break !!";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
             // 
@@ -904,7 +902,7 @@ namespace QANT.DTC
             this.MinimumSize = new System.Drawing.Size(1020, 600);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "DTC Client";
+            this.Text = "DTC DataClient";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);

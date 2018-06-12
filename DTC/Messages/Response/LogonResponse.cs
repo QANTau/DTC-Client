@@ -12,10 +12,27 @@ namespace QANT.DTC
         public class LogonResponse : JsonHeader
         {
             #region C++ Struct
-            //char Reason[TEXT_DESCRIPTION_LENGTH];
-            //uint8_t DoNotReconnect;
+            //LogonStatusEnum Result;
+            //char ResultText[TEXT_DESCRIPTION_LENGTH];
+            //char ReconnectAddress[64];
+            //int32_t Integer_1;
+            //char ServerName[60];
+            //uint8_t MarketDepthUpdatesBestBidAndAsk;
+            //uint8_t TradingIsSupported;
+            //uint8_t OCOOrdersSupported;
+            //uint8_t OrderCancelReplaceSupported;
+            //char SymbolExchangeDelimiter[SYMBOL_EXCHANGE_DELIMITER_LENGTH];
+            //uint8_t SecurityDefinitionsSupported;
+            //uint8_t HistoricalPriceDataSupported;
+            //uint8_t ResubscribeWhenMarketDataFeedAvailable;
+            //uint8_t MarketDepthIsSupported;
+            //uint8_t OneHistoricalPriceDataRequestPerConnection;
+            //uint8_t BracketOrdersSupported;
+            //uint8_t UseIntegerPriceOrderMessages;
+            //uint8_t UsesMultiplePositionsPerSymbolAndTradeAccount;
+            //uint8_t MarketDataSupported;
             #endregion
-            
+
             public int ProtocolVersion { get; set; }
             public Protocol.LogonStatus Result { get; set; }
             public string ResultText { get; set; }

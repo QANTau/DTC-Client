@@ -55,7 +55,7 @@ namespace QANT.DTC
                 ProtocolVersion = Protocol.CurrentVersion;
                 Username = user;
                 Password = password;
-                GeneralTextData = "QANT C# DTC Client";
+                GeneralTextData = "QANT Pty Ltd - C# DTC API";
                 Integer_1 = 0;
                 Integer_2 = 0;
                 HeartbeatIntervalInSeconds = isHistorical ? 0 : Protocol.HeartbeatInterval;

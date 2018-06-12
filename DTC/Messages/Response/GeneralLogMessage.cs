@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace QANT.DTC
 {
     public partial class Messages

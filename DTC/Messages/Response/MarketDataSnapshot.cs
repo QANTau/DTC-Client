@@ -1,7 +1,9 @@
-﻿using System;
+﻿
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -32,7 +34,7 @@ namespace QANT.DTC
             //t_DateTime4Byte TradingSessionDate;
             #endregion
 
-            public int SymbolId { get; set; }
+            public int SymbolID { get; set; }
             public double SessionSettlementPrice { get; set; }
             public double SessionOpenPrice { get; set; }
             public double SessionHighPrice { get; set; }

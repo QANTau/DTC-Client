@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -24,7 +26,7 @@ namespace QANT.DTC
             //uint8_t IsFinalRecord;
             #endregion
 
-            public int RequestId { get; set; }
+            public int RequestID { get; set; }
             public long StartDateTime { get; set; }
             public double OpenPrice { get; set; }
             public double HighPrice { get; set; }

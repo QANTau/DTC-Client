@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -18,7 +20,7 @@ namespace QANT.DTC
             //float IntToFloatPriceDivisor = 5;
             #endregion
 
-            public int RequestId { get; set; }
+            public int RequestID { get; set; }
             public Protocol.HistoricalDataInterval RecordInterval { get; set; }
             public uint UseZLibCompression { get; set; }
             public uint NoRecordsToReturn { get; set; }

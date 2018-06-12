@@ -1,6 +1,9 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 namespace QANT.DTC
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class Messages
     {
         /// <inheritdoc />
@@ -16,7 +19,7 @@ namespace QANT.DTC
             //uint16_t RetryTimeInSeconds;
             #endregion
 
-            public int RequestId { get; set; }
+            public int RequestID { get; set; }
             public string RejectText { get; set; }
             public Protocol.HistoricalPriceDataRejectReasonCode RejectReasonCode { get; set; }
             public ushort RetryTimeInSeconds { get; set; }
