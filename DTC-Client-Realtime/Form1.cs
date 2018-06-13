@@ -10,7 +10,7 @@ namespace QANT.DTC
     {
         private const string RegistryKey = "SOFTWARE\\DTC-Client";
 
-        private DataClient _dataClient;
+        private Client _client;
         private int _requestId = 1;
 
         private readonly Dictionary<string, int> _realtimeSymbolsData;
@@ -25,7 +25,6 @@ namespace QANT.DTC
         private void Form1_Load(object sender, EventArgs e)
         {
             LoadConnectionSettings();
-            LoadConnectionSettingsHistorical();
         }
 
         #region Connection Management
@@ -34,39 +33,40 @@ namespace QANT.DTC
         {
             var isConnected = false;
 
-            if (_dataClient != null)
-                if (_dataClient.IsConnected)
+            if (_client != null)
+                if (_client.IsConnected)
                     isConnected = true;
 
             if (!isConnected)
             {
                 // Setup DTC DataClient
-                _dataClient = new DataClient();
-                _dataClient.OnConnect += DataClientOnConnect;
-                _dataClient.OnDisconnect += DataClientOnDisconnect;
+                _client = new Client();
+                _client.OnConnect += ClientOnConnect;
+                _client.OnDisconnect += ClientOnDisconnect;
 
-                _dataClient.OnError += DataClientOnError;
-                _dataClient.OnInformation += DataClientOnInformation;
+                _client.OnError += ClientOnError;
+                _client.OnInformation += ClientOnInformation;
 
-                _dataClient.OnMarketDataBidAsk += DataClientOnMarketDataBidAsk;
+                _client.OnMarketDataBidAsk += ClientOnMarketBidAsk;
 
-                _dataClient.OnMessageSend += DataClientOnMessageSend;
-                _dataClient.OnMessageReceive += DataClientOnMessageReceive;
-                _dataClient.OnRawMessageSend += DataClientOnRawMessageSend;
-                _dataClient.OnRawMessageReceive += DataClientOnRawMessageReceive;
+                _client.OnMessageSend += ClientOnMessageSend;
+                _client.OnMessageReceive += ClientOnMessageReceive;
+                _client.OnRawMessageSend += ClientOnRawMessageSend;
+                _client.OnRawMessageReceive += ClientOnRawMessageReceive;
 
                 // IP Address & Port
                 var ipAddress = txtHost.Text.Trim();
-                Int16.TryParse(txtPort.Text, out short port);
+                short.TryParse(txtPort.Text, out var port);
                 var username = txtUsername.Text.Trim();
                 var password = txtPassword.Text.Trim();
 
                 // Connect
-                _dataClient.Connect(ipAddress, port, username, password);
+                _client.Connect(ipAddress, port, username, password);
             }
             else
             {
-                _dataClient.Disconnect();
+                _client.Disconnect();
+                SetConnDisconnStatus();
             }
         }
 
@@ -78,7 +78,7 @@ namespace QANT.DTC
                 return;
             }
 
-            cmdConnDisconn.Text = _dataClient.IsConnected ? @"Disconnect" : @"Connect";
+            cmdConnDisconn.Text = _client.IsConnected ? @"Disconnect" : @"Connect";
         }
 
         #endregion
@@ -87,14 +87,14 @@ namespace QANT.DTC
 
         private void CmdSymbolInfoRequest_Click(object sender, EventArgs e)
         {
-            if (_dataClient == null)
+            if (_client == null)
                 return;
 
             var symbol = txtSymbolInfo.Text.Trim().ToUpper();
 
             AppendActivityLog("Requesting Information for " + symbol + " (Request ID " + _requestId + ")");
 
-            _dataClient.RequestSymbolDefinition(_requestId, symbol);
+            _client.RequestSymbolDefinition(_requestId, symbol);
             _requestId++;
         }
 
@@ -104,7 +104,7 @@ namespace QANT.DTC
 
         private void CmdSubscribe_Click(object sender, EventArgs e)
         {
-            if (_dataClient == null)
+            if (_client == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
@@ -113,14 +113,14 @@ namespace QANT.DTC
 
             AppendActivityLog("Subscribing to " + symbol + " (Request ID " + _requestId + ")");
 
-            _dataClient.RequestMarketData(symbol, _requestId);
+            _client.RequestMarketData(symbol, _requestId);
             _realtimeSymbolsData.Add(symbol, _requestId);
             _requestId++;
         }
 
         private void CmdUnsubscribe_Click(object sender, EventArgs e)
         {
-            if (_dataClient == null)
+            if (_client == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
@@ -129,20 +129,20 @@ namespace QANT.DTC
 
             AppendActivityLog("Unsubscribing from " + symbol);
 
-            _dataClient.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
+            _client.RequestMarketData(symbol, _realtimeSymbolsData[symbol], Protocol.RequestAction.Unsubscribe);
             _realtimeSymbolsData.Remove(symbol);
         }
 
         private void CmdSnapshot_Click(object sender, EventArgs e)
         {
-            if (_dataClient == null)
+            if (_client == null)
                 return;
 
             var symbol = txtSymbolRT.Text.Trim().ToUpper();
 
             AppendActivityLog("Requesting Snapshot for " + symbol + " (Request ID " + _requestId + ")");
 
-            _dataClient.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
+            _client.RequestMarketData(symbol, _requestId, Protocol.RequestAction.Snapshot);
             _requestId++;
         }
 
@@ -150,29 +150,29 @@ namespace QANT.DTC
 
         #region Callbacks
 
-        private void DataClientOnConnect(object sender, EventArgs e)
+        private void ClientOnConnect(object sender, EventArgs e)
         {
             AppendActivityLog("Connected");
 
             SetConnDisconnStatus();
         }
 
-        private void DataClientOnDisconnect(object sender, EventArgs e)
+        private void ClientOnDisconnect(object sender, EventArgs e)
         {
             AppendActivityLog("Disconnected");
         }
 
-        private void DataClientOnInformation(object sender, MessageEventArgs e)
+        private void ClientOnInformation(object sender, MessageEventArgs e)
         {
             AppendActivityLog(e.Message);
         }
 
-        private void DataClientOnError(object sender, ErrorEventArgs e)
+        private void ClientOnError(object sender, ErrorEventArgs e)
         {
             AppendErrorLog(e.Exception == null ? e.Message : e.Exception.Message);
         }
 
-        private void DataClientOnMarketDataBidAsk(object sender, Messages.MarketDataUpdateBidAsk e)
+        private void ClientOnMarketBidAsk(object sender, Messages.MarketDataUpdateBidAsk e)
         {
             AppendRealTime(JsonConvert.SerializeObject(e));
         }
@@ -193,13 +193,13 @@ namespace QANT.DTC
             return true;
         }
 
-        private void DataClientOnMessageSend(object sender, MessageEventArgs e)
+        private void ClientOnMessageSend(object sender, MessageEventArgs e)
         {
             if (MessageFilter(e.Message))
                 AppendSendLog(e.Message);
         }
 
-        private void DataClientOnRawMessageSend(object sender, RawMessageEventArgs e)
+        private void ClientOnRawMessageSend(object sender, RawMessageEventArgs e)
         {
             if (!chkDisplayRaw.Checked) return;
 
@@ -210,13 +210,13 @@ namespace QANT.DTC
             AppendSendLogRaw(e.MessageType + " - " + Utils.GetString(packet));
         }
 
-        private void DataClientOnMessageReceive(object sender, MessageEventArgs e)
+        private void ClientOnMessageReceive(object sender, MessageEventArgs e)
         {
             if (MessageFilter(e.Message))
                 AppendReceiveLog(e.Message);
         }
 
-        private void DataClientOnRawMessageReceive(object sender, RawMessageEventArgs e)
+        private void ClientOnRawMessageReceive(object sender, RawMessageEventArgs e)
         {
             if (!chkDisplayRaw.Checked) return;
 
@@ -376,21 +376,6 @@ namespace QANT.DTC
             catch
             { }
         }
-
-        private void LoadConnectionSettingsHistorical()
-        {
-            //  Loads settings from Registry (SOFTWARE\DTC-Client) if they exist
-            try
-            {
-                var key = Registry.CurrentUser.OpenSubKey(RegistryKey);
-                if (key == null) return;
-                txtHostHistorical.Text = key.GetValue("HostHistorical").ToString();
-                txtPortHistorical.Text = key.GetValue("PortHistorical").ToString();
-            }
-            catch
-            { }
-        }
-
 
         #endregion
 

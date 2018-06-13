@@ -13,7 +13,7 @@ namespace QANT.DTC
     /// <summary>
     /// DTC Data Client
     /// </summary>
-    public class DataClient
+    public class Client
     {
         private readonly Socket _socket;
         private IPEndPoint _endPoint;
@@ -41,7 +41,7 @@ namespace QANT.DTC
         /// <summary>
         /// DTC DataClient
         /// </summary>
-        public DataClient()
+        public Client()
         {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {

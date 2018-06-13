@@ -42,9 +42,8 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clients\DataClient.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="EventArgs\ErrorEventArgs.cs" />
-    <Compile Include="Clients\HistoricalClient.cs" />
     <Compile Include="EventArgs\MessageEventArgs.cs" />
     <Compile Include="EventArgs\RawMessageEventArgs.cs" />
     <Compile Include="EventArgs\SymbolLookupEventArgs.cs" />
@@ -55,10 +54,6 @@
     <Compile Include="Messages\Response\GeneralLogMessage.cs" />
     <Compile Include="Messages\BinaryHeader.cs" />
     <Compile Include="Messages\Heartbeat\Heartbeat.cs" />
-    <Compile Include="Messages\Response\HistoricalPriceDataRecordResponse.cs" />
-    <Compile Include="Messages\Request\HistoricalPriceDataRequest.cs" />
-    <Compile Include="Messages\Response\HistoricalPriceDataReject.cs" />
-    <Compile Include="Messages\Response\HistoricalPriceDataResponse.cs" />
     <Compile Include="Messages\Request\Logoff.cs" />
     <Compile Include="Messages\Request\LogonRequest.cs" />
     <Compile Include="Messages\Response\LogonResponse.cs" />
@@ -86,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Clients\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
