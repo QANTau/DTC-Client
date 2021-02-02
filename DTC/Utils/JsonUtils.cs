@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using System.Diagnostics;
+using Newtonsoft.Json.Linq;
 
 namespace QANT.DTC
 {
@@ -11,9 +13,18 @@ namespace QANT.DTC
         /// <returns></returns>
         public static Protocol.MessageType GetMessageType(byte[] packet)
         {
-            var message = JObject.Parse(GetString(packet));
+            try
+            {
+                var message = JObject.Parse(GetString(packet));
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.Message + " processing '" + GetString(packet) + "'";
+                Debugger.Break();
+            }
 
-            ushort.TryParse((string)message["Type"], out var messageType);
+            //ushort.TryParse((string)message["Type"], out var messageType);
+            ushort.TryParse((string)JObject.Parse(GetString(packet))["Type"], out var messageType);
             return (Protocol.MessageType)messageType;
         }
 
