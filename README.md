@@ -10,5 +10,13 @@ The sample client application is intended to be used as an aid to understanding 
 
 * Other than for the intial negotiation, only Json encoding is supported.
 
-This library was originally developed to allow SmartQuant products (OpenQuant / QuantRouter / QuantBase) to access SierraChart data and execution services and isn't actively maintained publicly due to the use of a commercial TCP library for communications.
+This library was originally developed to allow SmartQuant products (OpenQuant / QuantRouter / QuantBase) to access SierraChart data and execution services.
 
+# Important Note	
+
+This project is no longer maintained, and the resulting code is no longer in use.  The repository is maintained to assist anyone looking at accessing DTC (Sierra Chart) via C#.
+
+In my own work, I now use the [Zorro Trader](https://zorro-project.com) plugin for Sierra Chart, as documented:
+
+* https://zorro-project.com/manual/en/sierra.htm
+* https://github.com/AndrewAMD/SierraChartZorroPlugin
